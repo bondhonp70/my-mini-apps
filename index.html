@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Learning Hub</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: var(--tg-theme-bg-color, #ffffff);
+      color: var(--tg-theme-text-color, #000000);
+    }
+  </style>
+</head>
+<body>
+  <h2>স্বাগতম!</h2>
+  <p id="hello">লোড হচ্ছে...</p>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+    document.getElementById("hello").textContent =
+      user ? "হ্যালো, " + user.first_name + "!" : "Telegram-এর ভেতর থেকে খুলুন।";
+  </script>
+</body>
+</html>
