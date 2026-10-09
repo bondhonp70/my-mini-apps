@@ -6,27 +6,231 @@
   <title>My Learning Hub</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    * { box-sizing: border-box; }
     body {
       font-family: sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 16px;
       background: var(--tg-theme-bg-color, #ffffff);
       color: var(--tg-theme-text-color, #000000);
     }
+    h2 { margin: 0 0 4px; }
+    .sub { opacity: 0.7; margin: 0 0 16px; font-size: 14px; }
+    .card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+      cursor: pointer;
+    }
+    .icon { font-size: 24px; }
+    .title { font-weight: 600; }
+    .status { font-size: 13px; opacity: 0.7; }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      background: var(--tg-theme-button-color, #2481cc);
+      color: var(--tg-theme-button-text-color, #ffffff);
+    }
+    iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
+    .hidden { display: none; }
+    .note { font-size: 13px; opacity: 0.7; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <h2>স্বাগতম!</h2>
-  <p id="hello">লোড হচ্ছে...</p>
+
+  <div id="listView">
+    <h2 id="hello">স্বাগতম!</h2>
+    <p class="sub">লেসন বেছে নিন</p>
+    <div id="lessonList"></div>
+  </div>
+
+  <div id="lessonView" class="hidden">
+    <h2 id="lessonTitle"></h2>
+    <div id="lessonBody"></div>
+  </div>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
 
+    // ============================================
+    // এখানে আপনার লেসন যোগ করুন
+    // url-এ Google Drive-এর পুরো শেয়ার লিংক বসান
+    // ============================================
+    const LESSONS = [
+      {
+        id: 1,
+        title: "লেসন ১: পরিচিতি",
+        url: "https://drive.google.com/file/d/13oLnzRGYiBE0uc0RcCKNdtJ6j7Mqxx36/view?usp=drivesdk"
+      },
+      {
+        id: 2,
+        title: "লেসন ২: প্রথম ধাপ",
+        url: "https://drive.google.com/file/d/161dT6GGPp2oZexhP89EjxidwfldlrpIi/view?usp=drivesdk"
+      },
+      {
+        id: 3,
+        title: "লেসন ৩: অনুশীলন",
+        url: "https://drive.google.com/file/d/14YW3aNsUIHeytBXgBd8fJdPtUeeSD6d7/view?usp=drivesdk"
+      }
+    ];
+    // ============================================
+
+    // ইউজারের নাম
     const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
-    document.getElementById("hello").textContent =
-      user ? "হ্যালো, " + user.first_name + "!" : "Telegram-এর ভেতর থেকে খুলুন।";
+    if (user) {
+      document.getElementById("hello").textContent = "হ্যালো, " + user.first_name + "!";
+    }
+
+    // আনলক করা লেসন মনে রাখা
+    function loadUnlocked() {
+      try {
+        return JSON.parse(localStorage.getItem("unlocked") || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+    function saveUnlocked(list) {
+      try {
+        localStorage.setItem("unlocked", JSON.stringify(list));
+      } catch (e) {}
+    }
+    let unlocked = loadUnlocked();
+
+    const listView = document.getElementById("listView");
+    const lessonView = document.getElementById("lessonView");
+    const lessonList = document.getElementById("lessonList");
+    const lessonTitle = document.getElementById("lessonTitle");
+    const lessonBody = document.getElementById("lessonBody");
+
+    // লিস্ট দেখানো
+    function renderList() {
+      lessonList.innerHTML = "";
+      LESSONS.forEach(function (lesson) {
+        const isOpen = unlocked.includes(lesson.id);
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML =
+          '<div class="icon">' + (isOpen ? "✅" : "🔒") + "</div>" +
+          "<div><div class='title'>" + lesson.title + "</div>" +
+          "<div class='status'>" + (isOpen ? "আনলক করা" : "লক করা") + "</div></div>";
+        card.onclick = function () { openLesson(lesson); };
+        lessonList.appendChild(card);
+      });
+    }
+
+    function showList() {
+      lessonView.classList.add("hidden");
+      listView.classList.remove("hidden");
+      tg.BackButton.hide();
+      lessonBody.innerHTML = ""; // ভিডিও বন্ধ করা
+      renderList();
+    }
+
+    // লেসন খোলা
+    function openLesson(lesson) {
+      listView.classList.add("hidden");
+      lessonView.classList.remove("hidden");
+      lessonTitle.textContent = lesson.title;
+      tg.BackButton.show();
+
+      if (unlocked.includes(lesson.id)) {
+        showVideo(lesson);
+      } else {
+        lessonBody.innerHTML =
+          "<p>এই লেসন দেখতে আনলক করুন।</p>" +
+          '<button class="btn" id="unlockBtn">🔓 আনলক করুন</button>';
+        document.getElementById("unlockBtn").onclick = function () {
+          // ধাপ ৫-এ এখানে আসল বিজ্ঞাপন বসবে
+          unlockLesson(lesson);
+        };
+      }
+    }
+
+    function unlockLesson(lesson) {
+      if (!unlocked.includes(lesson.id)) {
+        unlocked.push(lesson.id);
+        saveUnlocked(unlocked);
+      }
+      showVideo(lesson);
+    }
+
+    // লিংক দেখে ভিডিওর ধরন বোঝা
+    function getVideoInfo(url) {
+      let m;
+
+      // Google Drive
+      m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+      if (!m) m = url.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([\w-]+)/);
+      if (m) return { type: "iframe", src: "https://drive.google.com/file/d/" + m[1] + "/preview" };
+
+      // YouTube
+      m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
+      if (m) return { type: "iframe", src: "https://www.youtube-nocookie.com/embed/" + m[1] };
+
+      // Vimeo
+      m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+      if (m) return { type: "iframe", src: "https://player.vimeo.com/video/" + m[1] };
+
+      // Dailymotion
+      m = url.match(/dailymotion\.com\/video\/([\w]+)/);
+      if (m) return { type: "iframe", src: "https://www.dailymotion.com/embed/video/" + m[1] };
+
+      // Telegram পোস্ট
+      if (/^https?:\/\/t\.me\//.test(url)) return { type: "telegram", src: url };
+
+      // সরাসরি ভিডিও ফাইল
+      if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) return { type: "file", src: url };
+
+      // অন্য যেকোনো লিংক
+      return { type: "link", src: url };
+    }
+
+    function showVideo(lesson) {
+      const info = getVideoInfo(lesson.url);
+
+      if (info.type === "iframe") {
+        lessonBody.innerHTML =
+          '<iframe src="' + info.src + '" allow="autoplay; fullscreen" allowfullscreen></iframe>' +
+          '<p class="note">ভিডিও না চললে কিছুক্ষণ পর আবার চেষ্টা করুন।</p>';
+
+      } else if (info.type === "file") {
+        lessonBody.innerHTML =
+          '<video controls playsinline style="width:100%;border-radius:12px;margin-top:12px" src="' +
+          info.src + '"></video>';
+
+      } else if (info.type === "telegram") {
+        lessonBody.innerHTML = '<button class="btn" id="goBtn">▶️ Telegram-এ দেখুন</button>';
+        document.getElementById("goBtn").onclick = function () {
+          tg.openTelegramLink(info.src);
+        };
+
+      } else {
+        lessonBody.innerHTML = '<button class="btn" id="goBtn">▶️ ভিডিও দেখুন</button>';
+        document.getElementById("goBtn").onclick = function () {
+          tg.openLink(info.src);
+        };
+      }
+    }
+
+    tg.BackButton.onClick(showList);
+    renderList();
   </script>
 </body>
 </html>
