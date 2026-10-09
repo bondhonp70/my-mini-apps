@@ -1,236 +1,459 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My Learning Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Video Share Hub</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 16px;
-      background: var(--tg-theme-bg-color, #ffffff);
-      color: var(--tg-theme-text-color, #000000);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; padding: 14px 14px 40px;
+      background: var(--tg-theme-bg-color, #fff);
+      color: var(--tg-theme-text-color, #111);
     }
-    h2 { margin: 0 0 4px; }
-    .sub { opacity: 0.7; margin: 0 0 16px; font-size: 14px; }
-    .card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-      border-radius: 12px;
+    .hidden { display: none !important; }
+    h1 { font-size: 22px; margin: 4px 0 2px; }
+    h3 { font-size: 16px; margin: 18px 0 10px; }
+    .sub { opacity: .65; font-size: 13px; margin: 0 0 12px; }
+    #search {
+      width: 100%; padding: 12px 14px; border: none; border-radius: 12px; font-size: 15px;
       background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-      cursor: pointer;
+      color: var(--tg-theme-text-color, #111); outline: none;
     }
-    .icon { font-size: 24px; }
-    .title { font-weight: 600; }
-    .status { font-size: 13px; opacity: 0.7; }
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0 2px; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex: 0 0 auto; padding: 8px 14px; border-radius: 20px; font-size: 14px; cursor: pointer;
+      background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+    }
+    .tab.active { background: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff); }
+    .hscroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+    .hscroll::-webkit-scrollbar { display: none; }
+    .card {
+      border-radius: 14px; overflow: hidden; margin-bottom: 14px; cursor: pointer;
+      background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+    }
+    .card.mini { flex: 0 0 62%; max-width: 260px; margin-bottom: 0; }
+    .thumb {
+      position: relative; width: 100%; aspect-ratio: 16 / 9; display: flex;
+      align-items: center; justify-content: center; font-size: 40px;
+      background-size: cover; background-position: center;
+    }
+    .lock, .rank {
+      position: absolute; top: 8px; font-size: 13px; padding: 3px 8px; border-radius: 10px;
+      background: rgba(0,0,0,.6); color: #fff;
+    }
+    .lock { right: 8px; } .rank { left: 8px; font-weight: 700; }
+    .cbody { padding: 10px 12px 12px; }
+    .ctitle { font-weight: 600; font-size: 15px; line-height: 1.35; }
+    .cmeta { font-size: 13px; opacity: .75; margin-top: 4px; }
+    .cstate { font-size: 12px; opacity: .6; margin-top: 4px; }
     .btn {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      background: var(--tg-theme-button-color, #2481cc);
-      color: var(--tg-theme-button-text-color, #ffffff);
+      display: block; width: 100%; padding: 14px; margin-top: 12px; border: none; border-radius: 12px;
+      font-size: 16px; cursor: pointer;
+      background: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff);
     }
-    iframe {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border: 0;
-      border-radius: 12px;
-      margin-top: 12px;
+    .btn:disabled { opacity: .55; }
+    .btn.alt {
+      background: var(--tg-theme-secondary-bg-color, #f0f0f0); color: var(--tg-theme-text-color, #111);
     }
-    .hidden { display: none; }
-    .note { font-size: 13px; opacity: 0.7; margin-top: 10px; }
+    iframe, video { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 12px; margin-top: 12px; background: #000; }
+    .note { font-size: 13px; opacity: .7; margin-top: 10px; }
+    .empty { text-align: center; opacity: .6; padding: 24px 0; }
+    .back { margin-bottom: 6px; }
+    .trending-badge {
+      display: inline-block; background: #ff3b30; color: #fff; font-size: 11px;
+      padding: 2px 8px; border-radius: 20px; margin-left: 8px; vertical-align: middle;
+    }
   </style>
 </head>
 <body>
 
   <div id="listView">
-    <h2 id="hello">স্বাগতম!</h2>
-    <p class="sub">লেসন বেছে নিন</p>
-    <div id="lessonList"></div>
+    <h1 id="hello">Welcome!</h1>
+    <p class="sub">🔥 Share and discover trending videos</p>
+    <input id="search" type="text" placeholder="🔍 Search videos...">
+    <div id="tabs" class="tabs"></div>
+
+    <div id="trendingWrap" class="hidden">
+      <h3>🔥 Trending Videos <span class="trending-badge">HOT</span></h3>
+      <div id="trending" class="hscroll"></div>
+    </div>
+
+    <h3>All Videos</h3>
+    <div id="library"></div>
   </div>
 
   <div id="lessonView" class="hidden">
-    <h2 id="lessonTitle"></h2>
+    <h1 id="lessonTitle"></h1>
     <div id="lessonBody"></div>
   </div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+<script type="module">
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
 
-    // ============================================
-    // এখানে আপনার লেসন যোগ করুন
-    // url-এ Google Drive-এর পুরো শেয়ার লিংক বসান
-    // ============================================
-    const LESSONS = [
-      {
-        id: 1,
-        title: "লেসন ১: পরিচিতি",
-        url: "https://drive.google.com/file/d/13oLnzRGYiBE0uc0RcCKNdtJ6j7Mqxx36/view?usp=drivesdk"
-      },
-      {
-        id: 2,
-        title: "লেসন ২: প্রথম ধাপ",
-        url: "https://drive.google.com/file/d/161dT6GGPp2oZexhP89EjxidwfldlrpIi/view?usp=drivesdk"
-      },
-      {
-        id: 3,
-        title: "লেসন ৩: অনুশীলন",
-        url: "https://drive.google.com/file/d/14YW3aNsUIHeytBXgBd8fJdPtUeeSD6d7/view?usp=drivesdk"
-      }
-    ];
-    // ============================================
+  /* ================================================
+     1. VIDEO LIST (Add your videos here)
+     - id: unique number per video
+     - title: video title
+     - url: video link (Drive, YouTube, Vimeo, etc.)
+     - thumb: thumbnail image link (optional)
+     - ads: number of ads to unlock (default: DEFAULT_ADS)
+     ================================================ */
+  const VIDEOS = [
+    { id: 1, title: "🔥 views: new collection", 
+      url: "https://drive.google.com/file/d/16WjVt4mDlEIPKc9epGLbaG6nBcMhT4ET/view?usp=drivesdk", 
+      thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" },
+    { id: 2, title: "🔥 Trending: Top Programming Tips", 
+      url: "https://drive.google.com/file/d/14YW3aNsUIHeytBXgBd8fJdPtUeeSD6d7/view?usp=drivesdk", 
+      thumb: "https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg" },
+    { id: 3, title: "🔥 Trending: Design Motivation", 
+      url: "https://drive.google.com/file/d/161dT6GGPp2oZexhP89EjxidwfldlrpIi/view?usp=drivesdk", 
+      thumb: "https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg" },
+    { id: 4, title: "Introduction to Web Development", 
+      url: "https://drive.google.com/file/d/13oLnzRGYiBE0uc0RcCKNdtJ6j7Mqxx36/view?usp=drivesdk" },
+    { id: 5, title: "First Steps in Coding", 
+      url: "https://drive.google.com/file/d/YOUR_FILE_ID_2/view?usp=sharing" },
+    { id: 6, title: "Practice Session", 
+      url: "https://drive.google.com/file/d/YOUR_FILE_ID_3/view?usp=sharing" },
+    { id: 7, title: "🔥 Trending: Motivation Video", 
+      url: "https://vimeo.com/76979871", 
+      thumb: "https://i.vimeocdn.com/video/76979871_640.jpg" },
+    { id: 8, title: "🔥 Trending: Tech News", 
+      url: "https://www.dailymotion.com/video/x8n3z6k", 
+      thumb: "" }
+  ];
 
-    // ইউজারের নাম
-    const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
-    if (user) {
-      document.getElementById("hello").textContent = "হ্যালো, " + user.first_name + "!";
+  /* ================================================
+     2. ADS SETTINGS
+     ================================================ */
+  const BLOCK_ID = "52829";
+  const DEFAULT_ADS = 1;
+
+  /* ================================================
+     3. Firebase (for views/likes)
+     ================================================ */
+  const FIREBASE_CONFIG = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    appId: ""
+  };
+  const FB_VER = "10.12.2";
+
+  /* ---------- Utility Functions ---------- */
+  const GRADS = [
+    "linear-gradient(135deg,#667eea,#764ba2)", "linear-gradient(135deg,#f093fb,#f5576c)",
+    "linear-gradient(135deg,#4facfe,#00f2fe)", "linear-gradient(135deg,#43e97b,#38f9d7)",
+    "linear-gradient(135deg,#fa709a,#fee140)", "linear-gradient(135deg,#a18cd1,#fbc2eb)"
+  ];
+
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  function fmt(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace(".0", "") + "M";
+    if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
+    return String(n);
+  }
+  function loadList(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch (e) { return []; }
+  }
+  function saveList(key, list) {
+    try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) {}
+  }
+
+  let unlocked = loadList("unlocked");
+  let viewed = loadList("viewed");
+  let liked = loadList("liked");
+
+  const isUnlocked = (id) => unlocked.includes(id);
+
+  /* ---------- Ads Setup ---------- */
+  let AdController = null;
+  try { AdController = window.Adsgram.init({ blockId: BLOCK_ID }); }
+  catch (e) { console.log("Ad init failed", e); }
+
+  /* ---------- Firebase ---------- */
+  let db = null, fs = null, stats = {};
+  const statsOn = () => !!db;
+  const getStat = (id, k) => (stats[id] && stats[id][k]) || 0;
+
+  async function initFirebase() {
+    if (!FIREBASE_CONFIG.projectId) return;
+    try {
+      const base = "https://www.gstatic.com/firebasejs/" + FB_VER + "/";
+      const appMod = await import(base + "firebase-app.js");
+      fs = await import(base + "firebase-firestore.js");
+      const app = appMod.initializeApp(FIREBASE_CONFIG);
+      db = fs.getFirestore(app);
+      const snap = await fs.getDocs(fs.collection(db, "stats"));
+      snap.forEach((d) => { stats[d.id] = d.data(); });
+    } catch (e) {
+      console.log("Firebase failed", e);
+      db = null;
+    }
+  }
+  function bump(id, key) {
+    if (!stats[id]) stats[id] = {};
+    stats[id][key] = (stats[id][key] || 0) + 1;
+    if (db) {
+      fs.setDoc(fs.doc(db, "stats", String(id)), { [key]: fs.increment(1) }, { merge: true })
+        .catch((e) => console.log(e));
+    }
+  }
+
+  /* ---------- DOM Elements ---------- */
+  const listView = document.getElementById("listView");
+  const lessonView = document.getElementById("lessonView");
+  const lessonTitle = document.getElementById("lessonTitle");
+  const lessonBody = document.getElementById("lessonBody");
+  const tabsEl = document.getElementById("tabs");
+  const trendingWrap = document.getElementById("trendingWrap");
+  const trendingEl = document.getElementById("trending");
+  const libraryEl = document.getElementById("library");
+
+  let tab = "all";
+  let query = "";
+
+  const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+  if (user) document.getElementById("hello").textContent = "Hello, " + user.first_name + "!";
+
+  const TABS = [
+    { k: "all", t: "All" },
+    { k: "trending", t: "🔥 Trending", s: true },
+    { k: "views", t: "👁 Most Viewed", s: true },
+    { k: "likes", t: "❤️ Most Liked", s: true },
+    { k: "new", t: "🆕 New Videos" }
+  ];
+
+  function score(l) { return getStat(l.id, "views") + getStat(l.id, "likes") * 2; }
+
+  function sorted(list, mode) {
+    const a = list.slice();
+    if (mode === "trending") a.sort((x, y) => score(y) - score(x));
+    else if (mode === "views") a.sort((x, y) => getStat(y.id, "views") - getStat(x.id, "views"));
+    else if (mode === "likes") a.sort((x, y) => getStat(y.id, "likes") - getStat(x.id, "likes"));
+    else if (mode === "new") a.sort((x, y) => y.id - x.id);
+    return a;
+  }
+
+  function thumbEl(l) {
+    const t = el("div", "thumb");
+    if (l.thumb) t.style.backgroundImage = "url('" + l.thumb + "')";
+    else { t.style.background = GRADS[l.id % GRADS.length]; t.textContent = "🎬"; }
+    return t;
+  }
+
+  function makeCard(l, rank, mini) {
+    const open = isUnlocked(l.id);
+    const card = el("div", mini ? "card mini" : "card");
+    const th = thumbEl(l);
+    if (rank) th.appendChild(el("span", "rank", "#" + rank));
+    th.appendChild(el("span", "lock", open ? "✅" : "🔒"));
+    card.appendChild(th);
+
+    const body = el("div", "cbody");
+    body.appendChild(el("div", "ctitle", l.title));
+    if (statsOn()) {
+      body.appendChild(el("div", "cmeta",
+        "👁 " + fmt(getStat(l.id, "views")) + "   ❤️ " + fmt(getStat(l.id, "likes"))));
+    }
+    body.appendChild(el("div", "cstate", open ? "Unlocked" : "Watch ad to unlock"));
+    card.appendChild(body);
+
+    card.addEventListener("click", () => openVideo(l));
+    return card;
+  }
+
+  function renderTabs() {
+    tabsEl.innerHTML = "";
+    TABS.filter((x) => !x.s || statsOn()).forEach((x) => {
+      const b = el("div", "tab" + (tab === x.k ? " active" : ""), x.t);
+      b.addEventListener("click", () => { tab = x.k; renderList(); });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function renderList() {
+    renderTabs();
+
+    const showTrend = statsOn() && tab === "all" && !query;
+    trendingWrap.classList.toggle("hidden", !showTrend);
+    if (showTrend) {
+      trendingEl.innerHTML = "";
+      sorted(VIDEOS, "trending").slice(0, 5).forEach((l, i) =>
+        trendingEl.appendChild(makeCard(l, i + 1, true)));
     }
 
-    // আনলক করা লেসন মনে রাখা
-    function loadUnlocked() {
-      try {
-        return JSON.parse(localStorage.getItem("unlocked") || "[]");
-      } catch (e) {
-        return [];
-      }
-    }
-    function saveUnlocked(list) {
-      try {
-        localStorage.setItem("unlocked", JSON.stringify(list));
-      } catch (e) {}
-    }
-    let unlocked = loadUnlocked();
+    let list = VIDEOS.filter((l) => l.title.toLowerCase().includes(query));
+    if (tab !== "all") list = sorted(list, tab);
 
-    const listView = document.getElementById("listView");
-    const lessonView = document.getElementById("lessonView");
-    const lessonList = document.getElementById("lessonList");
-    const lessonTitle = document.getElementById("lessonTitle");
-    const lessonBody = document.getElementById("lessonBody");
+    libraryEl.innerHTML = "";
+    if (!list.length) libraryEl.appendChild(el("p", "empty", "No videos found"));
+    list.forEach((l) => libraryEl.appendChild(makeCard(l, 0, false)));
+  }
 
-    // লিস্ট দেখানো
-    function renderList() {
-      lessonList.innerHTML = "";
-      LESSONS.forEach(function (lesson) {
-        const isOpen = unlocked.includes(lesson.id);
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML =
-          '<div class="icon">' + (isOpen ? "✅" : "🔒") + "</div>" +
-          "<div><div class='title'>" + lesson.title + "</div>" +
-          "<div class='status'>" + (isOpen ? "আনলক করা" : "লক করা") + "</div></div>";
-        card.onclick = function () { openLesson(lesson); };
-        lessonList.appendChild(card);
-      });
-    }
-
-    function showList() {
-      lessonView.classList.add("hidden");
-      listView.classList.remove("hidden");
-      tg.BackButton.hide();
-      lessonBody.innerHTML = ""; // ভিডিও বন্ধ করা
-      renderList();
-    }
-
-    // লেসন খোলা
-    function openLesson(lesson) {
-      listView.classList.add("hidden");
-      lessonView.classList.remove("hidden");
-      lessonTitle.textContent = lesson.title;
-      tg.BackButton.show();
-
-      if (unlocked.includes(lesson.id)) {
-        showVideo(lesson);
-      } else {
-        lessonBody.innerHTML =
-          "<p>এই লেসন দেখতে আনলক করুন।</p>" +
-          '<button class="btn" id="unlockBtn">🔓 আনলক করুন</button>';
-        document.getElementById("unlockBtn").onclick = function () {
-          // ধাপ ৫-এ এখানে আসল বিজ্ঞাপন বসবে
-          unlockLesson(lesson);
-        };
-      }
-    }
-
-    function unlockLesson(lesson) {
-      if (!unlocked.includes(lesson.id)) {
-        unlocked.push(lesson.id);
-        saveUnlocked(unlocked);
-      }
-      showVideo(lesson);
-    }
-
-    // লিংক দেখে ভিডিওর ধরন বোঝা
-    function getVideoInfo(url) {
-      let m;
-
-      // Google Drive
-      m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
-      if (!m) m = url.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([\w-]+)/);
-      if (m) return { type: "iframe", src: "https://drive.google.com/file/d/" + m[1] + "/preview" };
-
-      // YouTube
-      m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
-      if (m) return { type: "iframe", src: "https://www.youtube-nocookie.com/embed/" + m[1] };
-
-      // Vimeo
-      m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-      if (m) return { type: "iframe", src: "https://player.vimeo.com/video/" + m[1] };
-
-      // Dailymotion
-      m = url.match(/dailymotion\.com\/video\/([\w]+)/);
-      if (m) return { type: "iframe", src: "https://www.dailymotion.com/embed/video/" + m[1] };
-
-      // Telegram পোস্ট
-      if (/^https?:\/\/t\.me\//.test(url)) return { type: "telegram", src: url };
-
-      // সরাসরি ভিডিও ফাইল
-      if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) return { type: "file", src: url };
-
-      // অন্য যেকোনো লিংক
-      return { type: "link", src: url };
-    }
-
-    function showVideo(lesson) {
-      const info = getVideoInfo(lesson.url);
-
-      if (info.type === "iframe") {
-        lessonBody.innerHTML =
-          '<iframe src="' + info.src + '" allow="autoplay; fullscreen" allowfullscreen></iframe>' +
-          '<p class="note">ভিডিও না চললে কিছুক্ষণ পর আবার চেষ্টা করুন।</p>';
-
-      } else if (info.type === "file") {
-        lessonBody.innerHTML =
-          '<video controls playsinline style="width:100%;border-radius:12px;margin-top:12px" src="' +
-          info.src + '"></video>';
-
-      } else if (info.type === "telegram") {
-        lessonBody.innerHTML = '<button class="btn" id="goBtn">▶️ Telegram-এ দেখুন</button>';
-        document.getElementById("goBtn").onclick = function () {
-          tg.openTelegramLink(info.src);
-        };
-
-      } else {
-        lessonBody.innerHTML = '<button class="btn" id="goBtn">▶️ ভিডিও দেখুন</button>';
-        document.getElementById("goBtn").onclick = function () {
-          tg.openLink(info.src);
-        };
-      }
-    }
-
-    tg.BackButton.onClick(showList);
+  document.getElementById("search").addEventListener("input", (e) => {
+    query = e.target.value.trim().toLowerCase();
     renderList();
-  </script>
+  });
+
+  /* ---------- Video Detail Page ---------- */
+  let current = null;
+
+  function openVideo(l) {
+    current = l;
+    listView.classList.add("hidden");
+    lessonView.classList.remove("hidden");
+    lessonTitle.textContent = l.title;
+    tg.BackButton.show();
+    window.scrollTo(0, 0);
+    renderVideoBody();
+  }
+
+  function showList() {
+    current = null;
+    lessonBody.innerHTML = "";
+    lessonView.classList.add("hidden");
+    listView.classList.remove("hidden");
+    tg.BackButton.hide();
+    renderList();
+  }
+  tg.BackButton.onClick(showList);
+
+  function renderVideoBody() {
+    lessonBody.innerHTML = "";
+    if (isUnlocked(current.id)) showVideoPlayer(current);
+    else showLockBox(current);
+  }
+
+  function showLockBox(l) {
+    const need = l.ads || DEFAULT_ADS;
+    lessonBody.appendChild(el("p", "note",
+      "Watch " + need + " ad(s) to unlock this video."));
+    const btn = el("button", "btn", "▶️ Watch Ad to Unlock (0/" + need + ")");
+    const msg = el("p", "note", "");
+    btn.addEventListener("click", () => watchAds(l, btn, msg));
+    lessonBody.appendChild(btn);
+    lessonBody.appendChild(msg);
+  }
+
+  let adBusy = false;
+  async function watchAds(l, btn, msg) {
+    if (adBusy) return;
+    const need = l.ads || DEFAULT_ADS;
+    if (!AdController) {
+      msg.textContent = "Ad system not initialized. Please try again later.";
+      return;
+    }
+    adBusy = true;
+    btn.disabled = true;
+    msg.textContent = "";
+    try {
+      for (let i = 0; i < need; i++) {
+        await AdController.show();
+        btn.textContent = "▶️ Watch Ad (" + (i + 1) + "/" + need + ")";
+      }
+      if (!unlocked.includes(l.id)) { unlocked.push(l.id); saveList("unlocked", unlocked); }
+      adBusy = false;
+      if (current && current.id === l.id) renderVideoBody();
+      return;
+    } catch (e) {
+      msg.textContent = "Ad not completed or no ad available. Please try again.";
+      btn.disabled = false;
+    }
+    adBusy = false;
+  }
+
+  /* ---------- Video Player ---------- */
+  function getVideoInfo(url) {
+    let m;
+    m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+    if (!m) m = url.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([\w-]+)/);
+    if (m) return { type: "iframe", src: "https://drive.google.com/file/d/" + m[1] + "/preview" };
+
+    m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
+    if (m) return { type: "iframe", src: "https://www.youtube-nocookie.com/embed/" + m[1] };
+
+    m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (m) return { type: "iframe", src: "https://player.vimeo.com/video/" + m[1] };
+
+    m = url.match(/dailymotion\.com\/video\/([\w]+)/);
+    if (m) return { type: "iframe", src: "https://www.dailymotion.com/embed/video/" + m[1] };
+
+    if (/^https?:\/\/t\.me\//.test(url)) return { type: "telegram", src: url };
+    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) return { type: "file", src: url };
+    return { type: "link", src: url };
+  }
+
+  function showVideoPlayer(l) {
+    if (!viewed.includes(l.id)) {
+      viewed.push(l.id);
+      saveList("viewed", viewed);
+      bump(l.id, "views");
+    }
+
+    const info = getVideoInfo(l.url);
+
+    if (info.type === "iframe") {
+      const f = document.createElement("iframe");
+      f.src = info.src;
+      f.setAttribute("allow", "autoplay; fullscreen");
+      f.setAttribute("allowfullscreen", "");
+      lessonBody.appendChild(f);
+      lessonBody.appendChild(el("p", "note", "If the video doesn't play, please try again later."));
+    } else if (info.type === "file") {
+      const v = document.createElement("video");
+      v.controls = true;
+      v.setAttribute("playsinline", "");
+      v.src = info.src;
+      lessonBody.appendChild(v);
+    } else {
+      const b = el("button", "btn", info.type === "telegram" ? "▶️ Watch on Telegram" : "▶️ Watch Video");
+      b.addEventListener("click", () => {
+        if (info.type === "telegram") tg.openTelegramLink(info.src);
+        else tg.openLink(info.src);
+      });
+      lessonBody.appendChild(b);
+    }
+
+    if (statsOn()) {
+      const already = liked.includes(l.id);
+      const lb = el("button", "btn alt",
+        (already ? "💖 Liked" : "🤍 Like") + " (" + fmt(getStat(l.id, "likes")) + ")");
+      lb.disabled = already;
+      lb.addEventListener("click", () => {
+        if (liked.includes(l.id)) return;
+        liked.push(l.id);
+        saveList("liked", liked);
+        bump(l.id, "likes");
+        lb.textContent = "💖 Liked (" + fmt(getStat(l.id, "likes")) + ")";
+        lb.disabled = true;
+      });
+      lessonBody.appendChild(lb);
+    }
+
+    // Share button
+    const shareBtn = el("button", "btn alt", "📤 Share Video");
+    shareBtn.addEventListener("click", () => {
+      const shareUrl = "https://t.me/share/url?url=" + encodeURIComponent(l.url) + "&text=" + encodeURIComponent(l.title);
+      tg.openTelegramLink(shareUrl);
+    });
+    lessonBody.appendChild(shareBtn);
+  }
+
+  /* ---------- Start ---------- */
+  renderList();
+  initFirebase().then(renderList);
+</script>
 </body>
 </html>
