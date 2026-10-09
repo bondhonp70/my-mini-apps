@@ -1,140 +1,305 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>My Learning Hub</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-  <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body {
-      font-family: sans-serif; margin: 0; padding: 14px 14px 40px;
-      background: var(--tg-theme-bg-color, #fff);
-      color: var(--tg-theme-text-color, #111);
-    }
-    .hidden { display: none !important; }
-    h1 { font-size: 22px; margin: 4px 0 2px; }
-    h3 { font-size: 16px; margin: 18px 0 10px; }
-    .sub { opacity: .65; font-size: 13px; margin: 0 0 12px; }
-    #search {
-      width: 100%; padding: 12px 14px; border: none; border-radius: 12px; font-size: 15px;
-      background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-      color: var(--tg-theme-text-color, #111); outline: none;
-    }
-    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0 2px; scrollbar-width: none; }
-    .tabs::-webkit-scrollbar { display: none; }
-    .tab {
-      flex: 0 0 auto; padding: 8px 14px; border-radius: 20px; font-size: 14px; cursor: pointer;
-      background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-    }
-    .tab.active { background: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff); }
-    .hscroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
-    .hscroll::-webkit-scrollbar { display: none; }
-    .card {
-      border-radius: 14px; overflow: hidden; margin-bottom: 14px; cursor: pointer;
-      background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-    }
-    .card.mini { flex: 0 0 62%; max-width: 260px; margin-bottom: 0; }
-    .thumb {
-      position: relative; width: 100%; aspect-ratio: 16 / 9; display: flex;
-      align-items: center; justify-content: center; font-size: 40px;
-      background-size: cover; background-position: center;
-    }
-    .lock, .rank {
-      position: absolute; top: 8px; font-size: 13px; padding: 3px 8px; border-radius: 10px;
-      background: rgba(0,0,0,.6); color: #fff;
-    }
-    .lock { right: 8px; } .rank { left: 8px; font-weight: 700; }
-    .cbody { padding: 10px 12px 12px; }
-    .ctitle { font-weight: 600; font-size: 15px; line-height: 1.35; }
-    .cmeta { font-size: 13px; opacity: .75; margin-top: 4px; }
-    .cstate { font-size: 12px; opacity: .6; margin-top: 4px; }
-    .btn {
-      display: block; width: 100%; padding: 14px; margin-top: 12px; border: none; border-radius: 12px;
-      font-size: 16px; cursor: pointer;
-      background: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff);
-    }
-    .btn:disabled { opacity: .55; }
-    .btn.alt {
-      background: var(--tg-theme-secondary-bg-color, #f0f0f0); color: var(--tg-theme-text-color, #111);
-    }
-    iframe, video { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 12px; margin-top: 12px; background: #000; }
-    .note { font-size: 13px; opacity: .7; margin-top: 10px; }
-    .empty { text-align: center; opacity: .6; padding: 24px 0; }
-    .back { margin-bottom: 6px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#07070d">
+<title>Learning Hub</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<style>
+  :root {
+    --bg: #07070d;
+    --glass: rgba(255,255,255,.06);
+    --glass2: rgba(255,255,255,.1);
+    --stroke: rgba(255,255,255,.1);
+    --txt: #f4f4fb;
+    --mut: rgba(244,244,251,.6);
+    --a1: #7c5cff;
+    --a2: #00d4ff;
+    --a3: #ff4fd8;
+    --grad: linear-gradient(135deg, var(--a1), var(--a2));
+    --grad2: linear-gradient(135deg, var(--a3), var(--a1));
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--txt); }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh; overflow-x: hidden;
+    padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 48px);
+  }
+  .orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: .45; z-index: 0; pointer-events: none; }
+  .orb.o1 { width: 280px; height: 280px; background: var(--a1); top: -90px; left: -90px; animation: float 14s ease-in-out infinite; }
+  .orb.o2 { width: 240px; height: 240px; background: var(--a2); top: 38%; right: -110px; animation: float 17s ease-in-out infinite reverse; }
+  .orb.o3 { width: 260px; height: 260px; background: var(--a3); bottom: -110px; left: 5%; opacity: .3; animation: float 20s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translate(30px, 40px) scale(1.1); } }
+  #app, #lessonView { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+  .hidden { display: none !important; }
+
+  /* Header */
+  .head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  .avatar {
+    width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center;
+    font-size: 21px; font-weight: 800; background: var(--grad); box-shadow: 0 8px 28px rgba(124,92,255,.45);
+    flex: 0 0 auto;
+  }
+  .hello { font-size: 21px; font-weight: 800; letter-spacing: -.3px; margin: 0; }
+  .tag { font-size: 13px; color: var(--mut); margin: 3px 0 0; }
+  .pills { display: flex; gap: 8px; margin-bottom: 16px; }
+  .pill {
+    flex: 1; padding: 11px 14px; border-radius: 16px; background: var(--glass);
+    border: 1px solid var(--stroke); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  }
+  .pill b { display: block; font-size: 19px; font-weight: 800; }
+  .pill span { font-size: 12px; color: var(--mut); }
+
+  /* Search */
+  .search { position: relative; margin-bottom: 14px; }
+  .search input {
+    width: 100%; padding: 15px 44px 15px 46px; border-radius: 18px; border: 1px solid var(--stroke);
+    background: var(--glass); color: var(--txt); font-size: 15px; outline: none;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: .2s;
+  }
+  .search input::placeholder { color: var(--mut); }
+  .search input:focus { border-color: var(--a1); box-shadow: 0 0 0 4px rgba(124,92,255,.2); }
+  .search .ico { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 17px; opacity: .8; }
+  .search .clr {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px;
+    border-radius: 50%; background: var(--glass2); display: grid; place-items: center; font-size: 12px; cursor: pointer;
+  }
+
+  /* Chips */
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto; padding: 9px 15px; border-radius: 99px; font-size: 13.5px; font-weight: 600;
+    background: var(--glass); border: 1px solid var(--stroke); color: var(--mut); cursor: pointer; transition: .2s;
+    white-space: nowrap;
+  }
+  .chip.on { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 6px 22px rgba(124,92,255,.45); }
+  .chips.cats .chip { padding: 7px 13px; font-size: 12.5px; }
+  .chips.cats .chip.on { background: var(--grad2); box-shadow: 0 6px 22px rgba(255,79,216,.35); }
+
+  /* Section titles */
+  .sec { display: flex; align-items: baseline; justify-content: space-between; margin: 22px 2px 12px; }
+  .sec h3 { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -.2px; }
+  .sec span { font-size: 12.5px; color: var(--mut); }
+
+  /* Cards */
+  .hscroll { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .hscroll::-webkit-scrollbar { display: none; }
+  .grid { display: grid; gap: 14px; }
+  @media (min-width: 560px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .card {
+    position: relative; border-radius: 22px; overflow: hidden; cursor: pointer;
+    background: var(--glass); border: 1px solid var(--stroke);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    transition: transform .18s, border-color .2s; animation: rise .5s both;
+  }
+  .card:active { transform: scale(.975); }
+  .card.mini { flex: 0 0 74%; max-width: 290px; scroll-snap-align: start; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .thumb {
+    position: relative; aspect-ratio: 16 / 9; background-size: cover; background-position: center;
+    display: grid; place-items: center; font-size: 44px;
+  }
+  .thumb::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,7,13,.78), transparent 55%); }
+  .badge {
+    position: absolute; z-index: 2; font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 99px;
+    background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.12);
+  }
+  .badge.tl { top: 10px; left: 10px; } .badge.tr { top: 10px; right: 10px; }
+  .badge.br { bottom: 10px; right: 10px; } .badge.bl { bottom: 10px; left: 10px; }
+  .badge.rank { background: var(--grad2); border: none; font-size: 13px; }
+  .badge.open { background: rgba(0,200,120,.35); }
+  .cbody { padding: 13px 15px 15px; }
+  .ctitle { font-size: 15.5px; font-weight: 700; line-height: 1.35; letter-spacing: -.1px; }
+  .cmeta { display: flex; gap: 14px; margin-top: 8px; font-size: 12.5px; color: var(--mut); }
+
+  /* Skeleton */
+  .skel { height: 210px; border-radius: 22px; background: linear-gradient(100deg, var(--glass) 30%, var(--glass2) 50%, var(--glass) 70%); background-size: 200% 100%; animation: shim 1.3s infinite; }
+  @keyframes shim { to { background-position: -200% 0; } }
+
+  .empty { text-align: center; padding: 46px 10px; color: var(--mut); }
+  .empty div { font-size: 44px; margin-bottom: 8px; }
+
+  /* Lesson page */
+  .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .iconbtn {
+    width: 42px; height: 42px; border-radius: 14px; border: 1px solid var(--stroke); background: var(--glass);
+    color: var(--txt); font-size: 18px; display: grid; place-items: center; cursor: pointer; flex: 0 0 auto;
+  }
+  .ltitle { font-size: 22px; font-weight: 800; letter-spacing: -.4px; line-height: 1.25; margin: 4px 2px 10px; }
+  .metarow { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 2px 14px; }
+  .meta { font-size: 12.5px; padding: 6px 12px; border-radius: 99px; background: var(--glass); border: 1px solid var(--stroke); color: var(--mut); }
+  .player { border-radius: 22px; overflow: hidden; border: 1px solid var(--stroke); box-shadow: 0 18px 60px rgba(124,92,255,.25); background: #000; }
+  .player iframe, .player video { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000; }
+  .desc { margin: 16px 2px 0; font-size: 14.5px; line-height: 1.6; color: var(--mut); }
+  .lockbox { border-radius: 24px; overflow: hidden; border: 1px solid var(--stroke); background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .lockbox .thumb { filter: saturate(1.1); }
+  .lockbox .thumb .big { position: relative; z-index: 2; font-size: 56px; filter: drop-shadow(0 6px 18px rgba(0,0,0,.6)); }
+  .lockin { padding: 18px; text-align: center; }
+  .lockin h4 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
+  .lockin p { margin: 0 0 14px; font-size: 13.5px; color: var(--mut); line-height: 1.5; }
+  .dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+  .dot { width: 34px; height: 6px; border-radius: 9px; background: var(--glass2); transition: .3s; }
+  .dot.on { background: var(--grad); box-shadow: 0 0 14px rgba(0,212,255,.6); }
+  .btn {
+    width: 100%; padding: 16px; border: none; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer;
+    color: #fff; background: var(--grad); box-shadow: 0 10px 34px rgba(124,92,255,.5); transition: .15s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn:disabled { opacity: .55; box-shadow: none; }
+  .btn.ghost { background: var(--glass); border: 1px solid var(--stroke); box-shadow: none; color: var(--txt); font-weight: 700; }
+  .btnrow { display: flex; gap: 10px; margin-top: 14px; }
+  .btnrow .btn { padding: 14px; font-size: 15px; }
+  .btn.liked { background: var(--grad2); border: none; box-shadow: 0 8px 28px rgba(255,79,216,.4); color: #fff; }
+  .note { font-size: 12.5px; color: var(--mut); text-align: center; margin: 12px 0 0; }
+
+  /* Toast */
+  #toast {
+    position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 28px); transform: translate(-50%, 30px);
+    padding: 12px 18px; border-radius: 16px; font-size: 14px; font-weight: 600; z-index: 99; opacity: 0;
+    background: rgba(30,30,48,.92); border: 1px solid var(--stroke); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    transition: .3s; max-width: 90%; text-align: center; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
 </head>
 <body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
 
-  <div id="listView">
-    <h1 id="hello">স্বাগতম!</h1>
-    <p class="sub">শিখতে লেসন বেছে নিন</p>
-    <input id="search" type="text" placeholder="🔍 লেসন খুঁজুন...">
-    <div id="tabs" class="tabs"></div>
-
-    <div id="trendingWrap" class="hidden">
-      <h3>🔥 ট্রেন্ডিং</h3>
-      <div id="trending" class="hscroll"></div>
+<div id="app">
+  <div class="head">
+    <div class="avatar" id="avatar">L</div>
+    <div>
+      <h1 class="hello" id="hello">Welcome 👋</h1>
+      <p class="tag">Learn something new today</p>
     </div>
-
-    <h3>📚 সব লেসন</h3>
-    <div id="library"></div>
   </div>
 
-  <div id="lessonView" class="hidden">
-    <h1 id="lessonTitle"></h1>
-    <div id="lessonBody"></div>
+  <div class="pills">
+    <div class="pill"><b id="stLessons">0</b><span>Lessons</span></div>
+    <div class="pill"><b id="stOpen">0</b><span>Unlocked</span></div>
+    <div class="pill"><b id="stLeft">0</b><span>To explore</span></div>
   </div>
+
+  <div class="search">
+    <span class="ico">🔍</span>
+    <input id="search" type="text" placeholder="Search lessons, topics..." autocomplete="off">
+    <span class="clr hidden" id="clr">✕</span>
+  </div>
+
+  <div class="chips" id="chips"></div>
+  <div class="chips cats" id="cats"></div>
+
+  <div id="featWrap" class="hidden">
+    <div class="sec"><h3>🔥 Trending Now</h3><span>Top picks</span></div>
+    <div class="hscroll" id="feat"></div>
+  </div>
+
+  <div class="sec"><h3 id="libTitle">All Lessons</h3><span id="libCount"></span></div>
+  <div class="grid" id="lib"></div>
+</div>
+
+<div id="lessonView" class="hidden">
+  <div class="topbar">
+    <div class="iconbtn" id="backBtn">←</div>
+  </div>
+  <div id="lessonBody"></div>
+</div>
+
+<div id="toast"></div>
 
 <script type="module">
   const tg = window.Telegram.WebApp;
   tg.ready();
   tg.expand();
+  try { tg.setHeaderColor("#07070d"); tg.setBackgroundColor("#07070d"); } catch (e) {}
 
-  /* ================================================
-     ১. লেসনের তালিকা (এখানে নিজের ভিডিও যোগ করুন)
-     - id: প্রতিটার জন্য আলাদা সংখ্যা, একবার দিলে আর বদলাবেন না
-     - title: আপনার ইচ্ছামতো নাম
-     - url: ভিডিওর লিংক (Drive, YouTube, Vimeo ইত্যাদি)
-     - thumb: ছবির লিংক (না দিলে ডিফল্ট ডিজাইন আসবে)
-     - ads: এই লেসনে কয়টা বিজ্ঞাপন (না দিলে DEFAULT_ADS)
-     ================================================ */
+  /* =====================================================
+     1) YOUR LESSONS  (edit here)
+     id      : unique number, never change it later
+     title   : lesson name
+     url     : video link (Drive / YouTube / Vimeo / mp4 / t.me ...)
+     OPTIONAL: category, duration ("12:30"), thumb (image URL),
+               icon (emoji), desc (description), ads (ads needed)
+     ===================================================== */
   const LESSONS = [
-    { id: 1, title: "লেসন ১: পরিচিতি",
-      url: "https://drive.google.com/file/d/16WjVt4mDlEIPKc9epGLbaG6nBcMhT4ET/view?usp=drivesdk" },
-    { id: 2, title: "লেসন ২: প্রথম ধাপ",
-      url: "https://drive.google.com/file/d/14YW3aNsUIHeytBXgBd8fJdPtUeeSD6d7/view?usp=drivesdk" },
-    { id: 3, title: "লেসন ৩: অনুশীলন",
-      url: "https://drive.google.com/file/d/161dT6GGPp2oZexhP89EjxidwfldlrpIi/view?usp=drivesdk" }
-    // আরও যোগ করতে ঠিক উপরের মতো করে কমা দিয়ে লাইন বাড়ান
+    { id: 1, title: "Your Title", category: "Topic", duration: "12:30", icon: "🍑",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/16WjVt4mDlEIPKc9epGLbaG6nBcMhT4ET/view?usp=drivesdk" },
+   { id: 2, title: "Your Title", category: "Topic", duration: "12:30", icon: "🍓",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/14YW3aNsUIHeytBXgBd8fJdPtUeeSD6d7/view?usp=drivesdk" },
+   { id: 3, title: "Your Title", category: "Topic", duration: "12:30", icon: "🌚",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/161dT6GGPp2oZexhP89EjxidwfldlrpIi/view?usp=drivesdk" },
+{ id: 4, title: "Your Title", category: "Topic", duration: "12:30", icon: "🤍",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/13oLnzRGYiBE0uc0RcCKNdtJ6j7Mqxx36/view?usp=drivesdk" },
+{ id: 5, title: "Your Title", category: "Topic", duration: "12:30", icon: "🎓",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/xxxx/view?usp=sharing" },
+{ id: 6, title: "Your Title", category: "Topic", duration: "12:30", icon: "🎓",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/xxxx/view?usp=sharing" },
+{ id: 8, title: "Your Title", category: "Topic", duration: "12:30", icon: "🎓",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/xxxx/view?usp=sharing" },
+{ id: 9, title: "Your Title", category: "Topic", duration: "12:30", icon: "🎓",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/xxxx/view?usp=sharing" },
+{ id: 10, title: "Your Title", category: "Topic", duration: "12:30", icon: "🎓",
+  desc: "Short description (optional)",
+  thumb: "https://bondhonp70.github.io/my-mini-apps/thumbs/4.jpg",
+  ads: 2,
+  url: "https://drive.google.com/file/d/xxxx/view?usp=sharing" }
   ];
 
-  /* ================================================
-     ২. বিজ্ঞাপন সেটিংস
-     ================================================ */
+  /* =====================================================
+     2) ADS + LINKS
+     ===================================================== */
   const BLOCK_ID = "52829";
-  const DEFAULT_ADS = 2;
+  const DEFAULT_ADS = 1;
+  // Your Mini App direct link (used by the Share button). Edit the last part if needed.
+  const APP_LINK = "https://t.me/Exclusive_Buzz_bot/Video";
 
-  /* ================================================
-     ৩. Firebase (ভিউ/লাইকের জন্য, পরের ধাপে ভরব)
-     খালি থাকলে ভিউ, লাইক ও ট্রেন্ডিং লুকানো থাকবে
-     ================================================ */
+  /* =====================================================
+     3) FIREBASE (views / likes / trending)
+     ===================================================== */
   const FIREBASE_CONFIG = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    appId: ""
+    apiKey: "AIzaSyD0BpbpBmcf1v88Eo-CSpbdOEdHVHrrVE4",
+    authDomain: "learning-hub-309f6.firebaseapp.com",
+    projectId: "learning-hub-309f6",
+    appId: "1:315700398621:web:e401fdfe3a0534d69494f4"
   };
   const FB_VER = "10.12.2";
 
-  /* ---------- সাধারণ ফাংশন ---------- */
+  /* ---------------- helpers ---------------- */
+  const $ = (id) => document.getElementById(id);
   const GRADS = [
     "linear-gradient(135deg,#667eea,#764ba2)", "linear-gradient(135deg,#f093fb,#f5576c)",
     "linear-gradient(135deg,#4facfe,#00f2fe)", "linear-gradient(135deg,#43e97b,#38f9d7)",
-    "linear-gradient(135deg,#fa709a,#fee140)", "linear-gradient(135deg,#a18cd1,#fbc2eb)"
+    "linear-gradient(135deg,#fa709a,#fee140)", "linear-gradient(135deg,#a18cd1,#fbc2eb)",
+    "linear-gradient(135deg,#ff9a9e,#fad0c4)", "linear-gradient(135deg,#30cfd0,#330867)"
   ];
-
   function el(tag, cls, text) {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -142,30 +307,35 @@
     return e;
   }
   function fmt(n) {
-    if (n >= 1000000) return (n / 1000000).toFixed(1).replace(".0", "") + "M";
-    if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
+    if (n >= 1e6) return (n / 1e6).toFixed(1).replace(".0", "") + "M";
+    if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
     return String(n);
   }
-  function loadList(key) {
-    try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch (e) { return []; }
-  }
-  function saveList(key, list) {
-    try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) {}
+  function loadList(k) { try { return JSON.parse(localStorage.getItem(k) || "[]"); } catch (e) { return []; } }
+  function saveList(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function haptic(t) { try { tg.HapticFeedback.impactOccurred(t || "light"); } catch (e) {} }
+  function hapticOk() { try { tg.HapticFeedback.notificationOccurred("success"); } catch (e) {} }
+  let toastT;
+  function toast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastT);
+    toastT = setTimeout(() => t.classList.remove("show"), 2600);
   }
 
   let unlocked = loadList("unlocked");
   let viewed = loadList("viewed");
   let liked = loadList("liked");
+  const isOpen = (id) => unlocked.includes(id);
 
-  const isUnlocked = (id) => unlocked.includes(id);
-
-  /* ---------- বিজ্ঞাপন চালু ---------- */
+  /* ---------------- ads ---------------- */
   let AdController = null;
   try { AdController = window.Adsgram.init({ blockId: BLOCK_ID }); }
   catch (e) { console.log("Ad init failed", e); }
 
-  /* ---------- Firebase ---------- */
-  let db = null, fs = null, stats = {};
+  /* ---------------- firebase ---------------- */
+  let db = null, fs = null, stats = {}, loading = true;
   const statsOn = () => !!db;
   const getStat = (id, k) => (stats[id] && stats[id][k]) || 0;
 
@@ -177,7 +347,10 @@
       fs = await import(base + "firebase-firestore.js");
       const app = appMod.initializeApp(FIREBASE_CONFIG);
       db = fs.getFirestore(app);
-      const snap = await fs.getDocs(fs.collection(db, "stats"));
+      const snap = await Promise.race([
+        fs.getDocs(fs.collection(db, "stats")),
+        new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 8000))
+      ]);
       snap.forEach((d) => { stats[d.id] = d.data(); });
     } catch (e) {
       console.log("Firebase failed", e);
@@ -193,243 +366,90 @@
     }
   }
 
-  /* ---------- তালিকা ---------- */
-  const listView = document.getElementById("listView");
-  const lessonView = document.getElementById("lessonView");
-  const lessonTitle = document.getElementById("lessonTitle");
-  const lessonBody = document.getElementById("lessonBody");
-  const tabsEl = document.getElementById("tabs");
-  const trendingWrap = document.getElementById("trendingWrap");
-  const trendingEl = document.getElementById("trending");
-  const libraryEl = document.getElementById("library");
-
-  let tab = "all";
-  let query = "";
-
-  const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
-  if (user) document.getElementById("hello").textContent = "হ্যালো, " + user.first_name + "!";
-
-  const TABS = [
-    { k: "all", t: "সব" },
-    { k: "trending", t: "🔥 ট্রেন্ডিং", s: true },
-    { k: "views", t: "👁 বেশি দেখা", s: true },
-    { k: "likes", t: "❤️ বেশি পছন্দ", s: true },
-    { k: "new", t: "🆕 নতুন" }
+  /* ---------------- state ---------------- */
+  let mode = "all", cat = "all", query = "";
+  const MODES = [
+    { k: "all", t: "✨ All" },
+    { k: "trending", t: "🔥 Trending", s: 1 },
+    { k: "views", t: "👁 Most Viewed", s: 1 },
+    { k: "likes", t: "❤️ Most Liked", s: 1 },
+    { k: "new", t: "🆕 Newest" },
+    { k: "unlocked", t: "🔓 Unlocked" },
+    { k: "locked", t: "🔒 Locked" }
   ];
+  const TITLES = {
+    all: "All Lessons", trending: "Trending", views: "Most Viewed", likes: "Most Liked",
+    new: "Newest", unlocked: "Unlocked", locked: "Locked"
+  };
 
-  function score(l) { return getStat(l.id, "views") + getStat(l.id, "likes") * 2; }
+  const score = (l) => getStat(l.id, "views") + getStat(l.id, "likes") * 2;
 
-  function sorted(list, mode) {
-    const a = list.slice();
-    if (mode === "trending") a.sort((x, y) => score(y) - score(x));
-    else if (mode === "views") a.sort((x, y) => getStat(y.id, "views") - getStat(x.id, "views"));
-    else if (mode === "likes") a.sort((x, y) => getStat(y.id, "likes") - getStat(x.id, "likes"));
+  function getList() {
+    const q = query;
+    let a = LESSONS.filter((l) => {
+      if (cat !== "all" && l.category !== cat) return false;
+      if (!q) return true;
+      return (l.title + " " + (l.category || "") + " " + (l.desc || "")).toLowerCase().includes(q);
+    });
+    if (mode === "unlocked") a = a.filter((l) => isOpen(l.id));
+    else if (mode === "locked") a = a.filter((l) => !isOpen(l.id));
+    else if (mode === "trending") a.sort((x, y) => score(y) - score(x) || y.id - x.id);
+    else if (mode === "views") a.sort((x, y) => getStat(y.id, "views") - getStat(x.id, "views") || y.id - x.id);
+    else if (mode === "likes") a.sort((x, y) => getStat(y.id, "likes") - getStat(x.id, "likes") || y.id - x.id);
     else if (mode === "new") a.sort((x, y) => y.id - x.id);
     return a;
   }
 
+  /* ---------------- rendering ---------------- */
   function thumbEl(l) {
     const t = el("div", "thumb");
-    if (l.thumb) t.style.backgroundImage = "url('" + l.thumb + "')";
-    else { t.style.background = GRADS[l.id % GRADS.length]; t.textContent = "🎓"; }
+    if (l.thumb) t.style.backgroundImage = "url('" + encodeURI(l.thumb) + "')";
+    else t.style.background = GRADS[l.id % GRADS.length];
+    if (!l.thumb) {
+      const ic = el("span", "", l.icon || "🎓");
+      ic.style.position = "relative"; ic.style.zIndex = "1";
+      t.appendChild(ic);
+    }
     return t;
   }
 
-  function makeCard(l, rank, mini) {
-    const open = isUnlocked(l.id);
+  function makeCard(l, idx, rank, mini) {
     const card = el("div", mini ? "card mini" : "card");
+    card.style.animationDelay = Math.min(idx, 10) * 45 + "ms";
     const th = thumbEl(l);
-    if (rank) th.appendChild(el("span", "rank", "#" + rank));
-    th.appendChild(el("span", "lock", open ? "✅" : "🔒"));
+    if (rank) th.appendChild(el("span", "badge tl rank", "#" + rank));
+    else if (l.category) th.appendChild(el("span", "badge tl", l.category));
+    th.appendChild(el("span", "badge tr" + (isOpen(l.id) ? " open" : ""), isOpen(l.id) ? "✅ Unlocked" : "🔒 Locked"));
+    if (l.duration) th.appendChild(el("span", "badge br", "⏱ " + l.duration));
     card.appendChild(th);
 
     const body = el("div", "cbody");
     body.appendChild(el("div", "ctitle", l.title));
     if (statsOn()) {
-      body.appendChild(el("div", "cmeta",
-        "👁 " + fmt(getStat(l.id, "views")) + "   ❤️ " + fmt(getStat(l.id, "likes"))));
+      const m = el("div", "cmeta");
+      m.appendChild(el("span", "", "👁 " + fmt(getStat(l.id, "views"))));
+      m.appendChild(el("span", "", "❤️ " + fmt(getStat(l.id, "likes"))));
+      body.appendChild(m);
     }
-    body.appendChild(el("div", "cstate", open ? "আনলক করা" : "আনলক করতে বিজ্ঞাপন দেখুন"));
     card.appendChild(body);
-
-    card.addEventListener("click", () => openLesson(l));
+    card.addEventListener("click", () => { haptic(); openLesson(l); });
     return card;
   }
 
-  function renderTabs() {
-    tabsEl.innerHTML = "";
-    TABS.filter((x) => !x.s || statsOn()).forEach((x) => {
-      const b = el("div", "tab" + (tab === x.k ? " active" : ""), x.t);
-      b.addEventListener("click", () => { tab = x.k; renderList(); });
-      tabsEl.appendChild(b);
+  function renderChips() {
+    const c = $("chips");
+    c.innerHTML = "";
+    MODES.filter((m) => !m.s || statsOn()).forEach((m) => {
+      const b = el("div", "chip" + (mode === m.k ? " on" : ""), m.t);
+      b.addEventListener("click", () => { mode = m.k; haptic(); render(); });
+      c.appendChild(b);
     });
-  }
 
-  function renderList() {
-    renderTabs();
-
-    const showTrend = statsOn() && tab === "all" && !query;
-    trendingWrap.classList.toggle("hidden", !showTrend);
-    if (showTrend) {
-      trendingEl.innerHTML = "";
-      sorted(LESSONS, "trending").slice(0, 5).forEach((l, i) =>
-        trendingEl.appendChild(makeCard(l, i + 1, true)));
-    }
-
-    let list = LESSONS.filter((l) => l.title.toLowerCase().includes(query));
-    if (tab !== "all") list = sorted(list, tab);
-
-    libraryEl.innerHTML = "";
-    if (!list.length) libraryEl.appendChild(el("p", "empty", "কিছু পাওয়া যায়নি"));
-    list.forEach((l) => libraryEl.appendChild(makeCard(l, 0, false)));
-  }
-
-  document.getElementById("search").addEventListener("input", (e) => {
-    query = e.target.value.trim().toLowerCase();
-    renderList();
-  });
-
-  /* ---------- লেসন পেজ ---------- */
-  let current = null;
-
-  function openLesson(l) {
-    current = l;
-    listView.classList.add("hidden");
-    lessonView.classList.remove("hidden");
-    lessonTitle.textContent = l.title;
-    tg.BackButton.show();
-    window.scrollTo(0, 0);
-    renderLessonBody();
-  }
-
-  function showList() {
-    current = null;
-    lessonBody.innerHTML = "";
-    lessonView.classList.add("hidden");
-    listView.classList.remove("hidden");
-    tg.BackButton.hide();
-    renderList();
-  }
-  tg.BackButton.onClick(showList);
-
-  function renderLessonBody() {
-    lessonBody.innerHTML = "";
-    if (isUnlocked(current.id)) showVideo(current);
-    else showLockBox(current);
-  }
-
-  function showLockBox(l) {
-    const need = l.ads || DEFAULT_ADS;
-    lessonBody.appendChild(el("p", "note",
-      "এই লেসন দেখতে " + need + "টি বিজ্ঞাপন দেখুন।"));
-    const btn = el("button", "btn", "▶️ বিজ্ঞাপন দেখে আনলক করুন (0/" + need + ")");
-    const msg = el("p", "note", "");
-    btn.addEventListener("click", () => watchAds(l, btn, msg));
-    lessonBody.appendChild(btn);
-    lessonBody.appendChild(msg);
-  }
-
-  let adBusy = false;
-  async function watchAds(l, btn, msg) {
-    if (adBusy) return;
-    const need = l.ads || DEFAULT_ADS;
-    if (!AdController) {
-      msg.textContent = "বিজ্ঞাপন সিস্টেম চালু হয়নি। পরে আবার চেষ্টা করুন।";
-      return;
-    }
-    adBusy = true;
-    btn.disabled = true;
-    msg.textContent = "";
-    try {
-      for (let i = 0; i < need; i++) {
-        await AdController.show();
-        btn.textContent = "▶️ বিজ্ঞাপন দেখুন (" + (i + 1) + "/" + need + ")";
-      }
-      if (!unlocked.includes(l.id)) { unlocked.push(l.id); saveList("unlocked", unlocked); }
-      adBusy = false;
-      if (current && current.id === l.id) renderLessonBody();
-      return;
-    } catch (e) {
-      msg.textContent = "বিজ্ঞাপন শেষ পর্যন্ত দেখা হয়নি বা এখন বিজ্ঞাপন নেই। আবার চেষ্টা করুন।";
-      btn.disabled = false;
-    }
-    adBusy = false;
-  }
-
-  /* ---------- ভিডিও ---------- */
-  function getVideoInfo(url) {
-    let m;
-    m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
-    if (!m) m = url.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([\w-]+)/);
-    if (m) return { type: "iframe", src: "https://drive.google.com/file/d/" + m[1] + "/preview" };
-
-    m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
-    if (m) return { type: "iframe", src: "https://www.youtube-nocookie.com/embed/" + m[1] };
-
-    m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-    if (m) return { type: "iframe", src: "https://player.vimeo.com/video/" + m[1] };
-
-    m = url.match(/dailymotion\.com\/video\/([\w]+)/);
-    if (m) return { type: "iframe", src: "https://www.dailymotion.com/embed/video/" + m[1] };
-
-    if (/^https?:\/\/t\.me\//.test(url)) return { type: "telegram", src: url };
-    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) return { type: "file", src: url };
-    return { type: "link", src: url };
-  }
-
-  function showVideo(l) {
-    // প্রতি ডিভাইসে একবার ভিউ গণনা
-    if (!viewed.includes(l.id)) {
-      viewed.push(l.id);
-      saveList("viewed", viewed);
-      bump(l.id, "views");
-    }
-
-    const info = getVideoInfo(l.url);
-
-    if (info.type === "iframe") {
-      const f = document.createElement("iframe");
-      f.src = info.src;
-      f.setAttribute("allow", "autoplay; fullscreen");
-      f.setAttribute("allowfullscreen", "");
-      lessonBody.appendChild(f);
-      lessonBody.appendChild(el("p", "note", "ভিডিও না চললে কিছুক্ষণ পর আবার চেষ্টা করুন।"));
-    } else if (info.type === "file") {
-      const v = document.createElement("video");
-      v.controls = true;
-      v.setAttribute("playsinline", "");
-      v.src = info.src;
-      lessonBody.appendChild(v);
-    } else {
-      const b = el("button", "btn", info.type === "telegram" ? "▶️ Telegram-এ দেখুন" : "▶️ ভিডিও দেখুন");
-      b.addEventListener("click", () => {
-        if (info.type === "telegram") tg.openTelegramLink(info.src);
-        else tg.openLink(info.src);
-      });
-      lessonBody.appendChild(b);
-    }
-
-    // লাইক বাটন (ভিউ/লাইক চালু থাকলে)
-    if (statsOn()) {
-      const already = liked.includes(l.id);
-      const lb = el("button", "btn alt",
-        (already ? "💖 পছন্দ করেছেন" : "🤍 পছন্দ করুন") + " (" + fmt(getStat(l.id, "likes")) + ")");
-      lb.disabled = already;
-      lb.addEventListener("click", () => {
-        if (liked.includes(l.id)) return;
-        liked.push(l.id);
-        saveList("liked", liked);
-        bump(l.id, "likes");
-        lb.textContent = "💖 পছন্দ করেছেন (" + fmt(getStat(l.id, "likes")) + ")";
-        lb.disabled = true;
-      });
-      lessonBody.appendChild(lb);
-    }
-  }
-
-  /* ---------- শুরু ---------- */
-  renderList();
-  initFirebase().then(renderList);
-</script>
-</body>
-</html>
+    const cc = $("cats");
+    cc.innerHTML = "";
+    const cats = [...new Set(LESSONS.map((l) => l.category).filter(Boolean))];
+    cc.classList.toggle("hidden", cats.length < 2);
+    if (cats.length >= 2) {
+      ["all", ...cats].forEach((k) => {
+        const b = el("div", "chip" + (cat === k ? " on" : ""), k === "all" ? "All topics" : k);
+        b.addEventListener("click", () => { cat = k; haptic(); render();
