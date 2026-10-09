@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Video Share Hub</title>
+  <title>My Learning Hub</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      margin: 0; padding: 14px 14px 40px;
+      font-family: sans-serif; margin: 0; padding: 14px 14px 40px;
       background: var(--tg-theme-bg-color, #fff);
       color: var(--tg-theme-text-color, #111);
     }
@@ -64,26 +63,22 @@
     .note { font-size: 13px; opacity: .7; margin-top: 10px; }
     .empty { text-align: center; opacity: .6; padding: 24px 0; }
     .back { margin-bottom: 6px; }
-    .trending-badge {
-      display: inline-block; background: #ff3b30; color: #fff; font-size: 11px;
-      padding: 2px 8px; border-radius: 20px; margin-left: 8px; vertical-align: middle;
-    }
   </style>
 </head>
 <body>
 
   <div id="listView">
-    <h1 id="hello">Welcome!</h1>
-    <p class="sub">🔥 Share and discover trending videos</p>
-    <input id="search" type="text" placeholder="🔍 Search videos...">
+    <h1 id="hello">স্বাগতম!</h1>
+    <p class="sub">শিখতে লেসন বেছে নিন</p>
+    <input id="search" type="text" placeholder="🔍 লেসন খুঁজুন...">
     <div id="tabs" class="tabs"></div>
 
     <div id="trendingWrap" class="hidden">
-      <h3>🔥 Trending Videos <span class="trending-badge">HOT</span></h3>
+      <h3>🔥 ট্রেন্ডিং</h3>
       <div id="trending" class="hscroll"></div>
     </div>
 
-    <h3>All Videos</h3>
+    <h3>📚 সব লেসন</h3>
     <div id="library"></div>
   </div>
 
@@ -98,45 +93,32 @@
   tg.expand();
 
   /* ================================================
-     1. VIDEO LIST (Add your videos here)
-     - id: unique number per video
-     - title: video title
-     - url: video link (Drive, YouTube, Vimeo, etc.)
-     - thumb: thumbnail image link (optional)
-     - ads: number of ads to unlock (default: DEFAULT_ADS)
+     ১. লেসনের তালিকা (এখানে নিজের ভিডিও যোগ করুন)
+     - id: প্রতিটার জন্য আলাদা সংখ্যা, একবার দিলে আর বদলাবেন না
+     - title: আপনার ইচ্ছামতো নাম
+     - url: ভিডিওর লিংক (Drive, YouTube, Vimeo ইত্যাদি)
+     - thumb: ছবির লিংক (না দিলে ডিফল্ট ডিজাইন আসবে)
+     - ads: এই লেসনে কয়টা বিজ্ঞাপন (না দিলে DEFAULT_ADS)
      ================================================ */
-  const VIDEOS = [
-    { id: 1, title: "🔥 views: new collection", 
-      url: "https://drive.google.com/file/d/16WjVt4mDlEIPKc9epGLbaG6nBcMhT4ET/view?usp=drivesdk", 
-      thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" },
-    { id: 2, title: "🔥 Trending: Top Programming Tips", 
-      url: "https://drive.google.com/file/d/14YW3aNsUIHeytBXgBd8fJdPtUeeSD6d7/view?usp=drivesdk", 
-      thumb: "https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg" },
-    { id: 3, title: "🔥 Trending: Design Motivation", 
-      url: "https://drive.google.com/file/d/161dT6GGPp2oZexhP89EjxidwfldlrpIi/view?usp=drivesdk", 
-      thumb: "https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg" },
-    { id: 4, title: "Introduction to Web Development", 
-      url: "https://drive.google.com/file/d/13oLnzRGYiBE0uc0RcCKNdtJ6j7Mqxx36/view?usp=drivesdk" },
-    { id: 5, title: "First Steps in Coding", 
-      url: "https://drive.google.com/file/d/YOUR_FILE_ID_2/view?usp=sharing" },
-    { id: 6, title: "Practice Session", 
-      url: "https://drive.google.com/file/d/YOUR_FILE_ID_3/view?usp=sharing" },
-    { id: 7, title: "🔥 Trending: Motivation Video", 
-      url: "https://vimeo.com/76979871", 
-      thumb: "https://i.vimeocdn.com/video/76979871_640.jpg" },
-    { id: 8, title: "🔥 Trending: Tech News", 
-      url: "https://www.dailymotion.com/video/x8n3z6k", 
-      thumb: "" }
+  const LESSONS = [
+    { id: 1, title: "লেসন ১: পরিচিতি",
+      url: "https://drive.google.com/file/d/16WjVt4mDlEIPKc9epGLbaG6nBcMhT4ET/view?usp=drivesdk" },
+    { id: 2, title: "লেসন ২: প্রথম ধাপ",
+      url: "https://drive.google.com/file/d/14YW3aNsUIHeytBXgBd8fJdPtUeeSD6d7/view?usp=drivesdk" },
+    { id: 3, title: "লেসন ৩: অনুশীলন",
+      url: "https://drive.google.com/file/d/161dT6GGPp2oZexhP89EjxidwfldlrpIi/view?usp=drivesdk" }
+    // আরও যোগ করতে ঠিক উপরের মতো করে কমা দিয়ে লাইন বাড়ান
   ];
 
   /* ================================================
-     2. ADS SETTINGS
+     ২. বিজ্ঞাপন সেটিংস
      ================================================ */
   const BLOCK_ID = "52829";
-  const DEFAULT_ADS = 1;
+  const DEFAULT_ADS = 2;
 
   /* ================================================
-     3. Firebase (for views/likes)
+     ৩. Firebase (ভিউ/লাইকের জন্য, পরের ধাপে ভরব)
+     খালি থাকলে ভিউ, লাইক ও ট্রেন্ডিং লুকানো থাকবে
      ================================================ */
   const FIREBASE_CONFIG = {
     apiKey: "",
@@ -146,7 +128,7 @@
   };
   const FB_VER = "10.12.2";
 
-  /* ---------- Utility Functions ---------- */
+  /* ---------- সাধারণ ফাংশন ---------- */
   const GRADS = [
     "linear-gradient(135deg,#667eea,#764ba2)", "linear-gradient(135deg,#f093fb,#f5576c)",
     "linear-gradient(135deg,#4facfe,#00f2fe)", "linear-gradient(135deg,#43e97b,#38f9d7)",
@@ -177,7 +159,7 @@
 
   const isUnlocked = (id) => unlocked.includes(id);
 
-  /* ---------- Ads Setup ---------- */
+  /* ---------- বিজ্ঞাপন চালু ---------- */
   let AdController = null;
   try { AdController = window.Adsgram.init({ blockId: BLOCK_ID }); }
   catch (e) { console.log("Ad init failed", e); }
@@ -211,7 +193,7 @@
     }
   }
 
-  /* ---------- DOM Elements ---------- */
+  /* ---------- তালিকা ---------- */
   const listView = document.getElementById("listView");
   const lessonView = document.getElementById("lessonView");
   const lessonTitle = document.getElementById("lessonTitle");
@@ -225,14 +207,14 @@
   let query = "";
 
   const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
-  if (user) document.getElementById("hello").textContent = "Hello, " + user.first_name + "!";
+  if (user) document.getElementById("hello").textContent = "হ্যালো, " + user.first_name + "!";
 
   const TABS = [
-    { k: "all", t: "All" },
-    { k: "trending", t: "🔥 Trending", s: true },
-    { k: "views", t: "👁 Most Viewed", s: true },
-    { k: "likes", t: "❤️ Most Liked", s: true },
-    { k: "new", t: "🆕 New Videos" }
+    { k: "all", t: "সব" },
+    { k: "trending", t: "🔥 ট্রেন্ডিং", s: true },
+    { k: "views", t: "👁 বেশি দেখা", s: true },
+    { k: "likes", t: "❤️ বেশি পছন্দ", s: true },
+    { k: "new", t: "🆕 নতুন" }
   ];
 
   function score(l) { return getStat(l.id, "views") + getStat(l.id, "likes") * 2; }
@@ -249,7 +231,7 @@
   function thumbEl(l) {
     const t = el("div", "thumb");
     if (l.thumb) t.style.backgroundImage = "url('" + l.thumb + "')";
-    else { t.style.background = GRADS[l.id % GRADS.length]; t.textContent = "🎬"; }
+    else { t.style.background = GRADS[l.id % GRADS.length]; t.textContent = "🎓"; }
     return t;
   }
 
@@ -267,10 +249,10 @@
       body.appendChild(el("div", "cmeta",
         "👁 " + fmt(getStat(l.id, "views")) + "   ❤️ " + fmt(getStat(l.id, "likes"))));
     }
-    body.appendChild(el("div", "cstate", open ? "Unlocked" : "Watch ad to unlock"));
+    body.appendChild(el("div", "cstate", open ? "আনলক করা" : "আনলক করতে বিজ্ঞাপন দেখুন"));
     card.appendChild(body);
 
-    card.addEventListener("click", () => openVideo(l));
+    card.addEventListener("click", () => openLesson(l));
     return card;
   }
 
@@ -290,15 +272,15 @@
     trendingWrap.classList.toggle("hidden", !showTrend);
     if (showTrend) {
       trendingEl.innerHTML = "";
-      sorted(VIDEOS, "trending").slice(0, 5).forEach((l, i) =>
+      sorted(LESSONS, "trending").slice(0, 5).forEach((l, i) =>
         trendingEl.appendChild(makeCard(l, i + 1, true)));
     }
 
-    let list = VIDEOS.filter((l) => l.title.toLowerCase().includes(query));
+    let list = LESSONS.filter((l) => l.title.toLowerCase().includes(query));
     if (tab !== "all") list = sorted(list, tab);
 
     libraryEl.innerHTML = "";
-    if (!list.length) libraryEl.appendChild(el("p", "empty", "No videos found"));
+    if (!list.length) libraryEl.appendChild(el("p", "empty", "কিছু পাওয়া যায়নি"));
     list.forEach((l) => libraryEl.appendChild(makeCard(l, 0, false)));
   }
 
@@ -307,17 +289,17 @@
     renderList();
   });
 
-  /* ---------- Video Detail Page ---------- */
+  /* ---------- লেসন পেজ ---------- */
   let current = null;
 
-  function openVideo(l) {
+  function openLesson(l) {
     current = l;
     listView.classList.add("hidden");
     lessonView.classList.remove("hidden");
     lessonTitle.textContent = l.title;
     tg.BackButton.show();
     window.scrollTo(0, 0);
-    renderVideoBody();
+    renderLessonBody();
   }
 
   function showList() {
@@ -330,17 +312,17 @@
   }
   tg.BackButton.onClick(showList);
 
-  function renderVideoBody() {
+  function renderLessonBody() {
     lessonBody.innerHTML = "";
-    if (isUnlocked(current.id)) showVideoPlayer(current);
+    if (isUnlocked(current.id)) showVideo(current);
     else showLockBox(current);
   }
 
   function showLockBox(l) {
     const need = l.ads || DEFAULT_ADS;
     lessonBody.appendChild(el("p", "note",
-      "Watch " + need + " ad(s) to unlock this video."));
-    const btn = el("button", "btn", "▶️ Watch Ad to Unlock (0/" + need + ")");
+      "এই লেসন দেখতে " + need + "টি বিজ্ঞাপন দেখুন।"));
+    const btn = el("button", "btn", "▶️ বিজ্ঞাপন দেখে আনলক করুন (0/" + need + ")");
     const msg = el("p", "note", "");
     btn.addEventListener("click", () => watchAds(l, btn, msg));
     lessonBody.appendChild(btn);
@@ -352,7 +334,7 @@
     if (adBusy) return;
     const need = l.ads || DEFAULT_ADS;
     if (!AdController) {
-      msg.textContent = "Ad system not initialized. Please try again later.";
+      msg.textContent = "বিজ্ঞাপন সিস্টেম চালু হয়নি। পরে আবার চেষ্টা করুন।";
       return;
     }
     adBusy = true;
@@ -361,20 +343,20 @@
     try {
       for (let i = 0; i < need; i++) {
         await AdController.show();
-        btn.textContent = "▶️ Watch Ad (" + (i + 1) + "/" + need + ")";
+        btn.textContent = "▶️ বিজ্ঞাপন দেখুন (" + (i + 1) + "/" + need + ")";
       }
       if (!unlocked.includes(l.id)) { unlocked.push(l.id); saveList("unlocked", unlocked); }
       adBusy = false;
-      if (current && current.id === l.id) renderVideoBody();
+      if (current && current.id === l.id) renderLessonBody();
       return;
     } catch (e) {
-      msg.textContent = "Ad not completed or no ad available. Please try again.";
+      msg.textContent = "বিজ্ঞাপন শেষ পর্যন্ত দেখা হয়নি বা এখন বিজ্ঞাপন নেই। আবার চেষ্টা করুন।";
       btn.disabled = false;
     }
     adBusy = false;
   }
 
-  /* ---------- Video Player ---------- */
+  /* ---------- ভিডিও ---------- */
   function getVideoInfo(url) {
     let m;
     m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
@@ -395,7 +377,8 @@
     return { type: "link", src: url };
   }
 
-  function showVideoPlayer(l) {
+  function showVideo(l) {
+    // প্রতি ডিভাইসে একবার ভিউ গণনা
     if (!viewed.includes(l.id)) {
       viewed.push(l.id);
       saveList("viewed", viewed);
@@ -410,7 +393,7 @@
       f.setAttribute("allow", "autoplay; fullscreen");
       f.setAttribute("allowfullscreen", "");
       lessonBody.appendChild(f);
-      lessonBody.appendChild(el("p", "note", "If the video doesn't play, please try again later."));
+      lessonBody.appendChild(el("p", "note", "ভিডিও না চললে কিছুক্ষণ পর আবার চেষ্টা করুন।"));
     } else if (info.type === "file") {
       const v = document.createElement("video");
       v.controls = true;
@@ -418,7 +401,7 @@
       v.src = info.src;
       lessonBody.appendChild(v);
     } else {
-      const b = el("button", "btn", info.type === "telegram" ? "▶️ Watch on Telegram" : "▶️ Watch Video");
+      const b = el("button", "btn", info.type === "telegram" ? "▶️ Telegram-এ দেখুন" : "▶️ ভিডিও দেখুন");
       b.addEventListener("click", () => {
         if (info.type === "telegram") tg.openTelegramLink(info.src);
         else tg.openLink(info.src);
@@ -426,32 +409,25 @@
       lessonBody.appendChild(b);
     }
 
+    // লাইক বাটন (ভিউ/লাইক চালু থাকলে)
     if (statsOn()) {
       const already = liked.includes(l.id);
       const lb = el("button", "btn alt",
-        (already ? "💖 Liked" : "🤍 Like") + " (" + fmt(getStat(l.id, "likes")) + ")");
+        (already ? "💖 পছন্দ করেছেন" : "🤍 পছন্দ করুন") + " (" + fmt(getStat(l.id, "likes")) + ")");
       lb.disabled = already;
       lb.addEventListener("click", () => {
         if (liked.includes(l.id)) return;
         liked.push(l.id);
         saveList("liked", liked);
         bump(l.id, "likes");
-        lb.textContent = "💖 Liked (" + fmt(getStat(l.id, "likes")) + ")";
+        lb.textContent = "💖 পছন্দ করেছেন (" + fmt(getStat(l.id, "likes")) + ")";
         lb.disabled = true;
       });
       lessonBody.appendChild(lb);
     }
-
-    // Share button
-    const shareBtn = el("button", "btn alt", "📤 Share Video");
-    shareBtn.addEventListener("click", () => {
-      const shareUrl = "https://t.me/share/url?url=" + encodeURIComponent(l.url) + "&text=" + encodeURIComponent(l.title);
-      tg.openTelegramLink(shareUrl);
-    });
-    lessonBody.appendChild(shareBtn);
   }
 
-  /* ---------- Start ---------- */
+  /* ---------- শুরু ---------- */
   renderList();
   initFirebase().then(renderList);
 </script>
