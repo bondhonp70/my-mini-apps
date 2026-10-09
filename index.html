@@ -12,10 +12,10 @@
   :root {
     --bg: #07070d;
     --glass: rgba(255,255,255,.06);
-    --glass2: rgba(255,255,255,.1);
+    --glass2: rgba(255,255,255,.11);
     --stroke: rgba(255,255,255,.1);
     --txt: #f4f4fb;
-    --mut: rgba(244,244,251,.6);
+    --mut: rgba(244,244,251,.62);
     --a1: #7c5cff;
     --a2: #00d4ff;
     --a3: #ff4fd8;
@@ -37,122 +37,144 @@
   #app, #lessonView { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
   .hidden { display: none !important; }
 
-  .head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  /* Header */
+  .head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; animation: rise .6s both; }
   .avatar {
-    width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center;
-    font-size: 21px; font-weight: 800; background: var(--grad); box-shadow: 0 8px 28px rgba(124,92,255,.45);
+    width: 52px; height: 52px; border-radius: 18px; display: grid; place-items: center;
+    font-size: 22px; font-weight: 800; background: var(--grad);
+    box-shadow: 0 8px 30px rgba(124,92,255,.5), inset 0 1px 0 rgba(255,255,255,.35);
     flex: 0 0 auto;
   }
-  .hello { font-size: 21px; font-weight: 800; letter-spacing: -.3px; margin: 0; }
+  .hello { font-size: 22px; font-weight: 800; letter-spacing: -.4px; margin: 0; }
   .tag { font-size: 13px; color: var(--mut); margin: 3px 0 0; }
-  .pills { display: flex; gap: 8px; margin-bottom: 16px; }
+  .pills { display: flex; gap: 8px; margin-bottom: 16px; animation: rise .6s .08s both; }
   .pill {
-    flex: 1; padding: 11px 14px; border-radius: 16px; background: var(--glass);
-    border: 1px solid var(--stroke); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    flex: 1; padding: 12px 14px; border-radius: 18px; background: var(--glass);
+    border: 1px solid var(--stroke); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   }
-  .pill b { display: block; font-size: 19px; font-weight: 800; }
+  .pill b { display: block; font-size: 20px; font-weight: 800; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .pill span { font-size: 12px; color: var(--mut); }
 
-  .search { position: relative; margin-bottom: 14px; }
+  /* Search */
+  .search { position: relative; margin-bottom: 14px; animation: rise .6s .14s both; }
   .search input {
-    width: 100%; padding: 15px 44px 15px 46px; border-radius: 18px; border: 1px solid var(--stroke);
+    width: 100%; padding: 15px 44px 15px 46px; border-radius: 20px; border: 1px solid var(--stroke);
     background: var(--glass); color: var(--txt); font-size: 15px; outline: none;
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: .2s;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: .2s;
   }
   .search input::placeholder { color: var(--mut); }
-  .search input:focus { border-color: var(--a1); box-shadow: 0 0 0 4px rgba(124,92,255,.2); }
-  .search .ico { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 17px; opacity: .8; }
+  .search input:focus { border-color: var(--a1); box-shadow: 0 0 0 4px rgba(124,92,255,.22); }
+  .search .ico { position: absolute; left: 17px; top: 50%; transform: translateY(-50%); font-size: 17px; opacity: .85; }
   .search .clr {
     position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px;
     border-radius: 50%; background: var(--glass2); display: grid; place-items: center; font-size: 12px; cursor: pointer;
   }
 
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; }
+  /* Chips */
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; animation: rise .6s .2s both; }
   .chips::-webkit-scrollbar { display: none; }
   .chip {
-    flex: 0 0 auto; padding: 9px 15px; border-radius: 99px; font-size: 13.5px; font-weight: 600;
+    flex: 0 0 auto; padding: 9px 16px; border-radius: 99px; font-size: 13.5px; font-weight: 600;
     background: var(--glass); border: 1px solid var(--stroke); color: var(--mut); cursor: pointer; transition: .2s;
     white-space: nowrap;
   }
-  .chip.on { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 6px 22px rgba(124,92,255,.45); }
+  .chip:active { transform: scale(.94); }
+  .chip.on { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 6px 24px rgba(124,92,255,.5); }
   .chips.cats .chip { padding: 7px 13px; font-size: 12.5px; }
-  .chips.cats .chip.on { background: var(--grad2); box-shadow: 0 6px 22px rgba(255,79,216,.35); }
+  .chips.cats .chip.on { background: var(--grad2); box-shadow: 0 6px 24px rgba(255,79,216,.38); }
 
+  /* Section titles */
   .sec { display: flex; align-items: baseline; justify-content: space-between; margin: 22px 2px 12px; }
-  .sec h3 { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -.2px; }
+  .sec h3 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -.3px; }
   .sec span { font-size: 12.5px; color: var(--mut); }
 
+  /* Cards */
   .hscroll { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .hscroll::-webkit-scrollbar { display: none; }
   .grid { display: grid; gap: 14px; }
   @media (min-width: 560px) { .grid { grid-template-columns: 1fr 1fr; } }
   .card {
-    position: relative; border-radius: 22px; overflow: hidden; cursor: pointer;
+    position: relative; border-radius: 24px; overflow: hidden; cursor: pointer;
     background: var(--glass); border: 1px solid var(--stroke);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    transition: transform .18s; animation: rise .5s both;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    transition: transform .18s, box-shadow .25s; animation: rise .55s both;
   }
-  .card:active { transform: scale(.975); }
-  .card.mini { flex: 0 0 74%; max-width: 290px; scroll-snap-align: start; }
-  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .card:active { transform: scale(.97); box-shadow: 0 10px 40px rgba(124,92,255,.3); }
+  .card.mini { flex: 0 0 76%; max-width: 300px; scroll-snap-align: start; }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
   .thumb {
     position: relative; aspect-ratio: 16 / 9; background-size: cover; background-position: center;
-    display: grid; place-items: center; font-size: 44px;
+    display: grid; place-items: center; font-size: 46px;
   }
-  .thumb::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,7,13,.78), transparent 55%); }
+  .thumb::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,7,13,.82), transparent 58%); }
   .badge {
     position: absolute; z-index: 2; font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 99px;
-    background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.14);
   }
   .badge.tl { top: 10px; left: 10px; } .badge.tr { top: 10px; right: 10px; }
   .badge.br { bottom: 10px; right: 10px; }
-  .badge.rank { background: var(--grad2); border: none; font-size: 13px; }
-  .badge.open { background: rgba(0,200,120,.35); }
-  .cbody { padding: 13px 15px 15px; }
+  .badge.rank { background: var(--grad2); border: none; font-size: 13px; box-shadow: 0 4px 16px rgba(255,79,216,.45); }
+  .badge.open { background: rgba(0,200,120,.4); }
+  .cbody { padding: 13px 16px 16px; }
   .ctitle { font-size: 15.5px; font-weight: 700; line-height: 1.35; letter-spacing: -.1px; }
   .cmeta { display: flex; gap: 14px; margin-top: 8px; font-size: 12.5px; color: var(--mut); }
 
-  .skel { height: 210px; border-radius: 22px; background: linear-gradient(100deg, var(--glass) 30%, var(--glass2) 50%, var(--glass) 70%); background-size: 200% 100%; animation: shim 1.3s infinite; }
+  .skel { height: 215px; border-radius: 24px; background: linear-gradient(100deg, var(--glass) 30%, var(--glass2) 50%, var(--glass) 70%); background-size: 200% 100%; animation: shim 1.3s infinite; }
   @keyframes shim { to { background-position: -200% 0; } }
 
   .empty { text-align: center; padding: 46px 10px; color: var(--mut); }
-  .empty div { font-size: 44px; margin-bottom: 8px; }
+  .empty div { font-size: 46px; margin-bottom: 8px; }
 
+  /* Lesson page */
   .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
   .iconbtn {
-    width: 42px; height: 42px; border-radius: 14px; border: 1px solid var(--stroke); background: var(--glass);
-    color: var(--txt); font-size: 18px; display: grid; place-items: center; cursor: pointer; flex: 0 0 auto;
+    width: 44px; height: 44px; border-radius: 15px; border: 1px solid var(--stroke); background: var(--glass);
+    color: var(--txt); font-size: 19px; display: grid; place-items: center; cursor: pointer; flex: 0 0 auto;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   }
-  .ltitle { font-size: 22px; font-weight: 800; letter-spacing: -.4px; line-height: 1.25; margin: 4px 2px 10px; }
+  .ltitle { font-size: 23px; font-weight: 800; letter-spacing: -.5px; line-height: 1.25; margin: 4px 2px 10px; animation: rise .5s both; }
   .metarow { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 2px 14px; }
   .meta { font-size: 12.5px; padding: 6px 12px; border-radius: 99px; background: var(--glass); border: 1px solid var(--stroke); color: var(--mut); }
-  .player { border-radius: 22px; overflow: hidden; border: 1px solid var(--stroke); box-shadow: 0 18px 60px rgba(124,92,255,.25); background: #000; }
+  .meta.timer { background: rgba(0,200,120,.18); border-color: rgba(0,200,120,.4); color: #7dffc4; font-weight: 700; }
+  .meta.timer.low { background: rgba(255,90,90,.18); border-color: rgba(255,90,90,.45); color: #ffb0b0; }
+  .player { border-radius: 24px; overflow: hidden; border: 1px solid var(--stroke); box-shadow: 0 20px 70px rgba(124,92,255,.3); background: #000; animation: rise .5s both; }
   .player iframe, .player video { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000; }
-  .desc { margin: 16px 2px 0; font-size: 14.5px; line-height: 1.6; color: var(--mut); }
-  .lockbox { border-radius: 24px; overflow: hidden; border: 1px solid var(--stroke); background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-  .lockbox .thumb .big { position: relative; z-index: 2; font-size: 56px; filter: drop-shadow(0 6px 18px rgba(0,0,0,.6)); }
-  .lockin { padding: 18px; text-align: center; }
-  .lockin h4 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
-  .lockin p { margin: 0 0 14px; font-size: 13.5px; color: var(--mut); line-height: 1.5; }
+  .desc { margin: 16px 2px 0; font-size: 14.5px; line-height: 1.65; color: var(--mut); }
+  .lockbox { border-radius: 26px; overflow: hidden; border: 1px solid var(--stroke); background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); animation: rise .5s both; }
+  .lockbox .thumb .big { position: relative; z-index: 2; font-size: 58px; filter: drop-shadow(0 6px 20px rgba(0,0,0,.65)); animation: pulse 2.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .lockin { padding: 20px 18px 22px; text-align: center; }
+  .lockin h4 { margin: 0 0 6px; font-size: 19px; font-weight: 800; letter-spacing: -.3px; }
+  .lockin p { margin: 0 0 14px; font-size: 13.5px; color: var(--mut); line-height: 1.55; }
   .dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
-  .dot { width: 34px; height: 6px; border-radius: 9px; background: var(--glass2); transition: .3s; }
-  .dot.on { background: var(--grad); box-shadow: 0 0 14px rgba(0,212,255,.6); }
+  .dot { width: 36px; height: 6px; border-radius: 9px; background: var(--glass2); transition: .3s; }
+  .dot.on { background: var(--grad); box-shadow: 0 0 14px rgba(0,212,255,.65); }
   .btn {
-    width: 100%; padding: 16px; border: none; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer;
-    color: #fff; background: var(--grad); box-shadow: 0 10px 34px rgba(124,92,255,.5); transition: .15s;
+    width: 100%; padding: 16px; border: none; border-radius: 19px; font-size: 16px; font-weight: 800; cursor: pointer;
+    color: #fff; background: var(--grad); box-shadow: 0 10px 36px rgba(124,92,255,.55), inset 0 1px 0 rgba(255,255,255,.3); transition: .15s;
   }
   .btn:active { transform: scale(.97); }
   .btn:disabled { opacity: .55; box-shadow: none; }
   .btn.ghost { background: var(--glass); border: 1px solid var(--stroke); box-shadow: none; color: var(--txt); font-weight: 700; }
   .btnrow { display: flex; gap: 10px; margin-top: 14px; }
   .btnrow .btn { padding: 14px; font-size: 15px; }
-  .btn.liked { background: var(--grad2); border: none; box-shadow: 0 8px 28px rgba(255,79,216,.4); color: #fff; }
+  .btn.liked { background: var(--grad2); border: none; box-shadow: 0 8px 30px rgba(255,79,216,.42); color: #fff; }
   .note { font-size: 12.5px; color: var(--mut); text-align: center; margin: 12px 0 0; }
+
+  .next {
+    display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 14px; border-radius: 22px; cursor: pointer;
+    background: var(--glass); border: 1px solid var(--stroke); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  }
+  .next:active { transform: scale(.98); }
+  .next .nico { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; background: var(--grad); flex: 0 0 auto; }
+  .next small { display: block; font-size: 11.5px; color: var(--mut); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 2px; }
+  .next b { font-size: 15px; font-weight: 700; line-height: 1.3; }
+  .next .arrow { margin-left: auto; font-size: 20px; opacity: .7; }
 
   #toast {
     position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 28px); transform: translate(-50%, 30px);
     padding: 12px 18px; border-radius: 16px; font-size: 14px; font-weight: 600; z-index: 99; opacity: 0;
-    background: rgba(30,30,48,.92); border: 1px solid var(--stroke); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    background: rgba(30,30,48,.94); border: 1px solid var(--stroke); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     transition: .3s; max-width: 90%; text-align: center; pointer-events: none;
   }
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -172,8 +194,8 @@
 
   <div class="pills">
     <div class="pill"><b id="stLessons">0</b><span>Lessons</span></div>
-    <div class="pill"><b id="stOpen">0</b><span>Unlocked</span></div>
-    <div class="pill"><b id="stLeft">0</b><span>To explore</span></div>
+    <div class="pill"><b id="stViews">–</b><span>Total views</span></div>
+    <div class="pill"><b id="stLikes">–</b><span>Total likes</span></div>
   </div>
 
   <div class="search">
@@ -214,8 +236,9 @@
      ===================================================== */
   const BLOCK_ID = "52829";
   const DEFAULT_ADS = 1;
+  const UNLOCK_MINUTES = 3;   // 0 = ad every single time. 3 = stays unlocked for 3 minutes
   const APP_LINK = "https://t.me/Exclusive_Buzz_bot/Video";
-  const AUTO_THUMBS = true;          // uses thumbs/<id>.jpg if the file exists
+  const AUTO_THUMBS = true;   // uses thumbs/<id>.jpg if the file exists
 
   const FIREBASE_CONFIG = {
     apiKey: "AIzaSyD0BpbpBmcf1v88Eo-CSpbdOEdHVHrrVE4",
@@ -225,11 +248,11 @@
   };
   const FB_VER = "10.12.2";
 
-  /* ---------------- clean lesson list (auto error-proofing) ---------------- */
+  /* ---------------- clean lesson list ---------------- */
   const seen = new Set();
   const LESSONS = (Array.isArray(window.LESSONS) ? window.LESSONS : []).filter((l) => {
     if (!l || l.id === undefined || !l.title || !l.url) return false;
-    if (/xxxx/i.test(l.url) || /YOUR_/i.test(l.url)) return false;   // skip placeholder links
+    if (/xxxx/i.test(l.url) || /YOUR_/i.test(l.url)) return false;
     if (seen.has(l.id)) { console.log("Duplicate lesson id skipped:", l.id); return false; }
     seen.add(l.id);
     return true;
@@ -254,6 +277,10 @@
     if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
     return String(n);
   }
+  function mmss(ms) {
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  }
   function loadList(k) { try { return JSON.parse(localStorage.getItem(k) || "[]"); } catch (e) { return []; } }
   function saveList(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   function haptic(t) { try { tg.HapticFeedback.impactOccurred(t || "light"); } catch (e) {} }
@@ -264,13 +291,15 @@
     t.textContent = msg;
     t.classList.add("show");
     clearTimeout(toastT);
-    toastT = setTimeout(() => t.classList.remove("show"), 2600);
+    toastT = setTimeout(() => t.classList.remove("show"), 2800);
   }
 
-  let unlocked = loadList("unlocked");
   let viewed = loadList("viewed");
   let liked = loadList("liked");
-  const isOpen = (id) => unlocked.includes(id);
+
+  // Unlock state lives in memory only (never saved), so a new visit needs a new ad
+  const unlockedUntil = {};
+  const isOpen = (id) => !!unlockedUntil[id] && unlockedUntil[id] > Date.now();
 
   /* ---------------- ads ---------------- */
   let AdController = null;
@@ -316,13 +345,10 @@
     { k: "trending", t: "🔥 Trending", s: 1 },
     { k: "views", t: "👁 Most Viewed", s: 1 },
     { k: "likes", t: "❤️ Most Liked", s: 1 },
-    { k: "new", t: "🆕 Newest" },
-    { k: "unlocked", t: "🔓 Unlocked" },
-    { k: "locked", t: "🔒 Locked" }
+    { k: "new", t: "🆕 Newest" }
   ];
   const TITLES = {
-    all: "All Lessons", trending: "Trending", views: "Most Viewed", likes: "Most Liked",
-    new: "Newest", unlocked: "Unlocked", locked: "Locked"
+    all: "All Lessons", trending: "Trending", views: "Most Viewed", likes: "Most Liked", new: "Newest"
   };
 
   const score = (l) => getStat(l.id, "views") + getStat(l.id, "likes") * 2;
@@ -333,9 +359,7 @@
       if (!query) return true;
       return (l.title + " " + (l.category || "") + " " + (l.desc || "")).toLowerCase().includes(query);
     });
-    if (mode === "unlocked") a = a.filter((l) => isOpen(l.id));
-    else if (mode === "locked") a = a.filter((l) => !isOpen(l.id));
-    else if (mode === "trending") a.sort((x, y) => score(y) - score(x) || y.id - x.id);
+    if (mode === "trending") a.sort((x, y) => score(y) - score(x) || y.id - x.id);
     else if (mode === "views") a.sort((x, y) => getStat(y.id, "views") - getStat(x.id, "views") || y.id - x.id);
     else if (mode === "likes") a.sort((x, y) => getStat(y.id, "likes") - getStat(x.id, "likes") || y.id - x.id);
     else if (mode === "new") a.sort((x, y) => y.id - x.id);
@@ -349,10 +373,10 @@
     return "";
   }
 
-  // Shows a gradient + emoji first. Swaps to the image only if it loads (no black boxes).
+  // Gradient + emoji first. Swaps to the image only if it loads (no black boxes).
   function thumbEl(l) {
     const t = el("div", "thumb");
-    t.style.backgroundImage = GRADS[l.id % GRADS.length];
+    t.style.backgroundImage = GRADS[Math.abs(l.id) % GRADS.length];
     const ic = el("span", "", l.icon || "🎓");
     ic.style.position = "relative";
     ic.style.zIndex = "1";
@@ -418,9 +442,10 @@
 
   function renderStats() {
     $("stLessons").textContent = LESSONS.length;
-    const open = LESSONS.filter((l) => isOpen(l.id)).length;
-    $("stOpen").textContent = open;
-    $("stLeft").textContent = LESSONS.length - open;
+    let v = 0, k = 0;
+    LESSONS.forEach((l) => { v += getStat(l.id, "views"); k += getStat(l.id, "likes"); });
+    $("stViews").textContent = statsOn() ? fmt(v) : "–";
+    $("stLikes").textContent = statsOn() ? fmt(k) : "–";
   }
 
   function render() {
@@ -467,6 +492,7 @@
 
   /* ---------------- lesson page ---------------- */
   let current = null;
+  let tick = null;
   const listView = $("app"), lessonView = $("lessonView"), lessonBody = $("lessonBody");
 
   function openLesson(l) {
@@ -478,6 +504,8 @@
     renderLesson();
   }
   function showList() {
+    clearInterval(tick);
+    if (current && UNLOCK_MINUTES === 0) delete unlockedUntil[current.id];
     current = null;
     lessonBody.innerHTML = "";
     lessonView.classList.add("hidden");
@@ -500,12 +528,38 @@
   }
 
   function renderLesson() {
+    clearInterval(tick);
     const l = current;
     lessonBody.innerHTML = "";
     lessonBody.appendChild(el("div", "ltitle", l.title));
-    lessonBody.appendChild(metaRow(l));
-    if (isOpen(l.id)) showVideo(l);
-    else showLockBox(l);
+    const row = metaRow(l);
+    lessonBody.appendChild(row);
+    if (isOpen(l.id)) {
+      if (UNLOCK_MINUTES > 0) startTimer(l, row);
+      showVideo(l);
+    } else {
+      showLockBox(l);
+    }
+  }
+
+  // Countdown pill. When time is over, the lesson locks again.
+  function startTimer(l, row) {
+    const pill = el("span", "meta timer", "");
+    row.insertBefore(pill, row.firstChild);
+    const update = () => {
+      if (!current || current.id !== l.id) { clearInterval(tick); return; }
+      const left = unlockedUntil[l.id] - Date.now();
+      if (left <= 0) {
+        clearInterval(tick);
+        toast("Time is up. Watch an ad to continue.");
+        renderLesson();
+        return;
+      }
+      pill.textContent = "⏳ " + mmss(left) + " left";
+      pill.classList.toggle("low", left < 30000);
+    };
+    update();
+    tick = setInterval(update, 1000);
   }
 
   function showLockBox(l) {
@@ -517,7 +571,10 @@
 
     const inn = el("div", "lockin");
     inn.appendChild(el("h4", "", "This lesson is locked"));
-    inn.appendChild(el("p", "", "Watch " + need + (need === 1 ? " short ad" : " short ads") + " to unlock it instantly. It stays unlocked for you."));
+    const how = UNLOCK_MINUTES > 0
+      ? "Watch " + need + (need === 1 ? " short ad" : " short ads") + " to unlock it for " + UNLOCK_MINUTES + " minutes."
+      : "Watch " + need + (need === 1 ? " short ad" : " short ads") + " to unlock it.";
+    inn.appendChild(el("p", "", how));
     const dots = el("div", "dots");
     const dotEls = [];
     for (let i = 0; i < need; i++) { const d = el("div", "dot"); dots.appendChild(d); dotEls.push(d); }
@@ -544,7 +601,7 @@
         await AdController.show();
         dotEls[i].classList.add("on");
       }
-      if (!unlocked.includes(l.id)) { unlocked.push(l.id); saveList("unlocked", unlocked); }
+      unlockedUntil[l.id] = Date.now() + (UNLOCK_MINUTES > 0 ? UNLOCK_MINUTES * 60000 : 24 * 3600000);
       hapticOk();
       toast("Lesson unlocked 🎉");
       adBusy = false;
@@ -642,6 +699,21 @@
     });
     row.appendChild(sb);
     lessonBody.appendChild(row);
+
+    // Up next
+    const idx = LESSONS.findIndex((x) => x.id === l.id);
+    const nx = idx >= 0 && idx < LESSONS.length - 1 ? LESSONS[idx + 1] : null;
+    if (nx) {
+      const n = el("div", "next");
+      n.appendChild(el("div", "nico", nx.icon || "🎓"));
+      const tx = el("div", "");
+      tx.appendChild(el("small", "", "Up next"));
+      tx.appendChild(el("b", "", nx.title));
+      n.appendChild(tx);
+      n.appendChild(el("div", "arrow", "›"));
+      n.addEventListener("click", () => { haptic(); openLesson(nx); });
+      lessonBody.appendChild(n);
+    }
   }
 
   /* ---------------- start ---------------- */
